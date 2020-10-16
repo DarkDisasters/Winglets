@@ -51,11 +51,18 @@ class KDEHandler():
             liX.append(dotInfo[i]['x'])
             liY.append(dotInfo[i]['y'])
         return np.array(liX), np.array(liY)
+    
+    def turpleToList(self, curTurpleData):
+        curListData = list(curTurpleData)
+        for item in curListData:
+            curListData[curListData.index(item)] = list(item)
+        return curListData
 
     def computeKDE(self, data):
         print('test data', data)
         KDEContour = KDE()
         liCluster = [];
+        liModifiedDots = []
         distanceCollect = [];
         contourPar = [];
 
@@ -72,8 +79,8 @@ class KDEHandler():
             # print('m1', m1)
             liDots = KDEContour.listZip(m1, m2);
             Z1 = KDEContour.kdeCore(m1, m2, xmin, xmax, ymin, ymax);
-            curDensity = list(Z1.ravel())
-
+            curDensity = self.turpleToList(zip(list(m1), list(m2)))
+            liModifiedDots.append(curDensity)
             liCluster.append({
                 'classId': classId,
                 'dots': liDots,
@@ -82,6 +89,6 @@ class KDEHandler():
                 'maxDensity': Z1.ravel().max(),
                 'distance': curDistance
             })
-        return {'clusters': liCluster, 'canvasRange': [xmin, xmax, ymin, ymax]}
+        return liModifiedDots, {'clusters': liCluster, 'canvasRange': [xmin, xmax, ymin, ymax]}
 
 DistanceInstance = Distance()

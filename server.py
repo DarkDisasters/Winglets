@@ -35,7 +35,6 @@ from handler.handler_all import *
 
 if __name__ == '__main__':
     testName = 'dots'
-    print(testName)
     outputDots(testName)
     main()
     
