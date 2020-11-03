@@ -1,4 +1,8 @@
 import math;
+from geoOperation import getGeoInfo;
+from shapely.geometry import LineString;
+from shapely.geometry import Point;
+from shapely.geometry import Polygon;
 
 class DistanceOperation():
     def getDifClassDotDistance(self, dot1, dot2):
@@ -9,6 +13,86 @@ class WingletsStepHandler():
     m_mapClassIdDotIndexSihouttle = {}
     m_mapClassIdMaxMinSI = {}
     m_mapClassIdDotIndexSensitivity = {}
+
+    geoInstance = getGeoInfo()
+
+    # 不知道有啥用
+    def sortIsoValue(self, mapIsoValueContour):
+        liSortedIsoValueStr = []
+        liIsoValueStr = mapIsoValueContour.keys()
+        liNewIsoValue = []
+
+        for i in range(len(liIsoValueStr)):
+            liNewIsoValue.append(int(liIsoValueStr[i]))
+        liNewIsoValue.sort()
+
+        for i in range(len(liNewIsoValue)):
+            curIsoValueNum = liNewIsoValue[i]
+            for j in range(len(liIsoValueStr)):
+                isoValueTmp = int(liIsoValueStr[j])
+                if(abs(curIsoValueNum - isoValueTmp) < 1e-6):
+                    liSortedIsoValueStr.append(liIsoValueStr[j])
+        return liSortedIsoValueStr
+
+    def getRadialIntersection(self, pos1, pos2, contour):
+        centroidPos = Point(pos1[0], pos1[1])
+        # ？1500 不知道是干什么的
+        dataPos = Point(1500 * pos2[0] - 1500 * pos1[0], 1500 * pos2[1] - 1500 * pos1[1])
+        centroidAlongLinePath = LineString(centroidPos, dataPos)
+
+        contourPathPoints = []
+        for i in range(len(contour)):
+            contourPathPoints.append(Point(contour[i][0], contour[i][1]))
+        # 因为shapely没有添加的api，所以将点放在数组里使用Polygon一次性生成polygon
+        contourPath = Polygon(contourPathPoints)
+
+        # 通过shapely的intersection获取到LineString和Polygon的交集，应该是一条lineString，可以用coords来获取交集的点
+        # 如果交集为一个线段，一个点为交点，一个点为线段中的一个点，一般是第一个元素
+        liIntersectionsCoords = list(contourPath.intersection(centroidAlongLinePath).coords)
+
+        #chose the closest one
+        minDistance = 1e6
+        minIndex = -1
+        for i in range(len(liIntersectionsCoords)):
+            dis_temp = math.sqrt(math.pow(liIntersectionsCoords[i][0] - pos2[0], 2) + math.pow(liIntersectionsCoords[i][1] - pos2[1], 2))
+            if (dis_temp < minDistance):
+                minDistance = dis_temp
+                minIndex = i
+        if (minIndex == -1):
+            return {'pos': [], 'index': -1}    
+    	
+        return {
+            'pos': [liIntersectionsCoords[minIndex][0], liIntersectionsCoords[minIndex][1]],
+            #? intersections[minIndex].index
+            'index': minIndex
+        }
+        
+
+
+
+    def interpolateContourSelf(self, contour, contourNum):
+        mapIndexContour = {}
+        liDeformVector = []
+        sampleNum = 120
+        centroidPos = self.geoInstance.getCentroid(contour)
+        for i in range(len(sampleNum)):
+            arc = (i * 2 * math.pi) / sampleNum
+            intersectResult_outer = self.getRadialIntersection(centroidPos, [centroidPos[0] + 100*math.cos(arc), centroidPos[1] + 100*math.sin(arc)], contour)
+            deformVector = [centroidPos, intersectResult_outer['pos']]
+            liDeformVector.append(deformVector)
+            #interpolate
+            for p in range(contourNum):
+                perCentage = (p+1) / (contourNum + 1)
+                contourPos = self.geoInstance.getLineXYatPercent({'x': deformVector[0][0], 'y': deformVector[0][1]},
+                                                               {'x': deformVector[1][0], 'y': deformVector[1][1]},
+                                                               perCentage)
+
+                
+                if(p not in mapIndexContour.keys()):
+                    mapIndexContour[p] = [[contourPos['x'], contourPos['y']]]
+                else:
+                    mapIndexContour[p].append([contourPos['x'], contourPos['y']])
+        return mapIndexContour
 
     def computeDisMatrix(self, data):
         distanceOpeInstance = DistanceOperation()
@@ -123,4 +207,27 @@ class WingletsStepHandler():
             mapMainIsoContour = {}
             mapDotIndexDeepIsoIndex = {}
 
+            # mapIsoValueCanvasContours = self.convertContourToCanvas(mapContours)
+            #不知道排序的作用
+            liSortedIsoValueStr = self.sortIsoValue(mapContours)
+            clusterInfo[i]['sortedIsoValue'] = liSortedIsoValueStr
+
+            outContour = []
+            # spcanvas.js第1575行有几个if判断，不知道选哪个
+            outIsoValue = liSortedIsoValueStr[1]
+            outContour = mapContours[outIsoValue][0]
+
+            # 根据公共轮廓插值，并根据中心点与该点连线与contour的交集找到在contour上离该点最近的点
+            mapNewIndexContours = self.interpolateContourSelf(outContour, 20)
+
+            mapNewCanvasContours = {}
+            mapNewIsoValueInnerContours = {}
+            mapNewCanvasContours[outIsoValue] = [outContour]
+            mapNewIsoValueInnerContours[outIsoValue] = mapNewIndexContours
+
             
+
+
+
+
+
