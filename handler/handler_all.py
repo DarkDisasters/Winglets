@@ -15,8 +15,9 @@ def outputDots(fieldsName):
     dots = myDB.getDots(fieldsName)['dots']
     modifiedDots, clusterInfo = myKdeHandler.computeKDE(dots)
     print('*******')
-    wingletsStepHandler.computeDisMatrix(dots)
-    wingletsStepHandler.computeSilhouette(clusterInfo['clusters'])
+    wingletsStepHandler.startDrawWinglets(dots, clusterInfo)
+    # wingletsStepHandler.computeDisMatrix(dots)
+    # wingletsStepHandler.computeSilhouette(clusterInfo['clusters'])
     # print(modifiedDots)
     drawHandler = DrawAllHandler()
     drawCircleHandler, drawContourHandler, drawWingletsHandler = drawHandler.init()
