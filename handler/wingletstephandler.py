@@ -87,11 +87,12 @@ class WingletsStepHandler():
         mapIndexContour = {}
         liDeformVector = []
         sampleNum = 120
+        # 算出当前contour的centroid，此时的contour为前几步找到的当前class中的应该保留的外层公共contour
         centroidPos = self.geoInstance.getCentroid(contour)
-        # ?补充120度的弧度的边
+        # 希望的是将当前公共contour分成120份，对每一份求交点来对每一份进行插值 ？分成120份的意义
         for i in range(sampleNum):
+            # 这个arc就可以在下面帮助生成中心点在当前i份中(120份中的第i份)发出的射线
             arc = (i * 2 * math.pi) / sampleNum
-            # ？
             intersectResult_outer = self.getRadialIntersection(centroidPos, [centroidPos[0] + 100*math.cos(arc), centroidPos[1] + 100*math.sin(arc)], contour)
             deformVector = [centroidPos, intersectResult_outer['pos']]
             liDeformVector.append(deformVector)
@@ -463,8 +464,9 @@ class WingletsStepHandler():
                         self.m_mapDisMatrix[str(curCluster2) + '_' + str(q) + '-' + str(curCluster1) + '_' + str(p)] = curDistance
     
     def computeSilhouette(self, clusterInfo):
-        m_mapClassIDDotIndexSihouttle = {}
-        m_mapClassIDMaxMinSI = {}
+        # 在全局定义了
+        # m_mapClassIDDotIndexSihouttle = {}  # 以class为key存放当前类的所有点的关于sihoutte的一个比值，(当前值-最小silhoutte值) / (最大silhoutte值-最小silhoutte值)
+        # m_mapClassIDMaxMinSI = {}   # 以class为key存放当前类silhoutte的最大最小值，数组形式
 
         disMatrix = self.m_mapDisMatrix
         g_Max = 1e-6
@@ -473,15 +475,19 @@ class WingletsStepHandler():
         for i in range(len(clusterInfo)):
             curClusterId1 = clusterInfo[i]['classId']
 
-            liNormalSIIndex = []
+            liNormalSIIndex = []    
+            liSilhoutteIndex = []   
             silhoutte_min = 1e6
             silhoutte_max = 1e-6
 
             curLiDots1 = clusterInfo[i]['dots']
-            liSilhoutteIndex = []
-
+            
+            #计算当前class中每个点与该类中其他点的距离求均值放于avgA中，
+            #计算当前class中每个点与其他类中所有点的距离求均值，将最小的?的均值放于avgB中
+            # 根据上面的avgA和avgB求silhouette
             for p in range(len(curLiDots1)):
                 avgA = 0
+                #avgA为和同一类点求距离
                 for q in range(len(curLiDots1)):
                     if((str(curClusterId1) + '_' + str(p) + '-' + str(curClusterId1) + '_' + str(q)) in self.m_mapDisMatrix):
                         avgA += self.m_mapDisMatrix[str(curClusterId1) + '_' + str(p) + '-' + str(curClusterId1) + '_' + str(q)]
@@ -506,32 +512,36 @@ class WingletsStepHandler():
                             if((str(curClusterId1) + '_' + str(p) + '-' + str(curClusterId2) + '_' + str(k)) in self.m_mapDisMatrix == False):
                                 tempAvgB += 10
                                 tempAvgB += self.m_mapDisMatrix[str(curClusterId1) + '_' + str(p) + '-' + str(curClusterId2) + '_' + str(k)]
+                    # ? 只用计算该店与各个类分别的距离再选择其中最小的？
                     tempAvgB /= len(curLiDots2)
                     if(avgB > tempAvgB):
                         avgB = tempAvgB
-                
+            
                 if(avgA < avgB):
                     sihoutte = 1 - avgA/avgB
                 elif(avgA == avgB):
                     sihoutte = 0
                 else:
                     sihoutte = avgB/avgA - 1
-            
-            liSilhoutteIndex.append(sihoutte)
-            if(silhoutte_max < sihoutte):
-                silhoutte_max = sihoutte;
-            if(silhoutte_min > sihoutte):
-                silhoutte_min = sihoutte;
-            if(g_Min > sihoutte):
-                g_Min = sihoutte;
-            if(g_Max < sihoutte):
-                g_Max = sihoutte
-            
-        for sihoutteIndex in range(len(liSilhoutteIndex)):
-            liNormalSIIndex.append((liSilhoutteIndex[sihoutteIndex] - silhoutte_min) / (silhoutte_max - silhoutte_min))
         
-        self.m_mapClassIdDotIndexSihouttle[curClusterId1] = liNormalSIIndex
-        self.m_mapClassIdMaxMinSI[curClusterId1] = [silhoutte_max, silhoutte_min]
+                liSilhoutteIndex.append(sihoutte)
+                if(silhoutte_max < sihoutte):
+                    silhoutte_max = sihoutte;
+                if(silhoutte_min > sihoutte):
+                    silhoutte_min = sihoutte;
+                if(g_Min > sihoutte):
+                    g_Min = sihoutte;
+                if(g_Max < sihoutte):
+                    g_Max = sihoutte
+            
+            # liSihoutteIndex 当前class的各个点的silhoutte
+            # liNormalSIIndex 存放的是当前类的各个点的关于sihoutte的一个比值，(当前值-最小silhoutte值) / (最大silhoutte值-最小silhoutte值)
+            for sihoutteIndex in range(len(liSilhoutteIndex)):
+                liNormalSIIndex.append((liSilhoutteIndex[sihoutteIndex] - silhoutte_min) / (silhoutte_max - silhoutte_min))
+            
+
+            self.m_mapClassIdDotIndexSihouttle[curClusterId1] = liNormalSIIndex
+            self.m_mapClassIdMaxMinSI[curClusterId1] = [silhoutte_max, silhoutte_min]
     
     def computeDotStrokes(self, clusterInfo):
         m_WingType = 'outcontour'
@@ -565,8 +575,10 @@ class WingletsStepHandler():
             outContour = []
             # spcanvas.js第1575行有几个if判断，不知道选哪个
             # outIsoValue = liSortedIsoValueStr[1]
-            outIsoValue = liSortedIsoValueStr[0]
-            outContour = mapContours[outIsoValue][0]
+            # outIsoValue = liSortedIsoValueStr[0]
+            # outContour = mapContours[outIsoValue][0]
+            outIsoValue = mainIsoValue
+            outContour = mainContour
 
             # 根据公共轮廓插值，并根据中心点与该点连线与contour的交集找到在contour上离该点最近的点
             mapNewIndexContours = self.interpolateContourSelf(outContour, 20)

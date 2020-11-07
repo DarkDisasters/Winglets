@@ -156,6 +156,8 @@ class KDEHandler():
             curTransferDot = self.turpleToList(zip(list(m1), list(m2)))
             liModifiedDots.append(curTransferDot)
 
+            # 生成初始的contour，返回的是以isovalue为key的对象
+            # 每个key对应以当前isovalue生成的一个或多个contour以及该contour里面包含的点的数量
             transferContour = KDEContour.getContours(Z1, dotsXYData)
 
             #将有getContours函数中提取的isoValue存放在liIsoValue中并排序
@@ -186,6 +188,7 @@ class KDEHandler():
                 isoValue = str(isoValue)
                 liContour = transferContour[isoValue]
 
+                # 在每个isoValue下找到当前isovalue生成的contour中count最多的contour，并且将其放入当前isovalue下的 liNewContour和liNewCount中
                 for temp in range(len(liContour)):
                     tempContour = liContour[temp]['contour']
                     tempCount = liContour[temp]['count']
@@ -227,7 +230,7 @@ class KDEHandler():
                 'minDensity': Z1.ravel().min(),
                 'maxDensity': Z1.ravel().max(),
                 'distance': curDistance,
-                'contours': mapBezierContour,
+                'contours': mapBezierContour,   
                 'counts': mapIsoContourCount,
                 'maincontour': mainContour,
                 'mainisovalue': mainIsoValue
