@@ -13,4 +13,4 @@ class MONGODBHANDLER:
         self._collection = self._db[collectionName]
 
     def getDots (self, fieldsName):
-        return self._collection.find_one({'name': '22'})
+        return self._collection.find_one({'name': '4'})

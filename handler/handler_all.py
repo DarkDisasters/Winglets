@@ -12,16 +12,17 @@ wingletsStepHandler = WingletsStepHandler()
 
 
 def outputDots(fieldsName):
+    drawHandler = DrawAllHandler()
+    drawCircleHandler, drawKDEHandler, drawContourHandler, drawWingletsHandler = drawHandler.init()
+
     dots = myDB.getDots(fieldsName)['dots']
     modifiedDots, clusterInfo = myKdeHandler.computeKDE(dots)
+    drawCircleHandler.drawCircleTest(clusterInfo['clusters'])
+    # drawKDEHandler.drawKDEMap(clusterInfo['clusters'])
+    drawContourHandler.drawContour(clusterInfo['clusters'])
     print('*******')
-    wingletsStepHandler.startDrawWinglets(dots, clusterInfo)
-    # wingletsStepHandler.computeDisMatrix(dots)
-    # wingletsStepHandler.computeSilhouette(clusterInfo['clusters'])
-    # print(modifiedDots)
-    drawHandler = DrawAllHandler()
-    drawCircleHandler, drawContourHandler, drawWingletsHandler = drawHandler.init()
-    drawCircleHandler.drawCircleTest(modifiedDots)
+    curClusterInfo, mapClassIdDotIndexStroke = wingletsStepHandler.startDrawWinglets(dots, clusterInfo)
+    drawWingletsHandler.generateWings(curClusterInfo, mapClassIdDotIndexStroke)
     drawHandler.endDraw()
 
 # cv.pack()
