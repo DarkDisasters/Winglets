@@ -13,15 +13,17 @@ wingletsStepHandler = WingletsStepHandler()
 
 def outputDots(fieldsName):
     drawHandler = DrawAllHandler()
-    drawCircleHandler, drawKDEHandler, drawContourHandler, drawWingletsHandler = drawHandler.init()
+    drawCircleHandler, drawKDEHandler, drawMainContourHandler, drawContourHandler, drawWingletsHandler = drawHandler.init()
 
     dots = myDB.getDots(fieldsName)['dots']
     modifiedDots, clusterInfo = myKdeHandler.computeKDE(dots)
     drawCircleHandler.drawCircleTest(clusterInfo['clusters'])
     # drawKDEHandler.drawKDEMap(clusterInfo['clusters'])
     drawContourHandler.drawContour(clusterInfo['clusters'])
+    drawMainContourHandler.drawMainContour(clusterInfo['clusters'])
     print('*******')
-    curClusterInfo, mapClassIdDotIndexStroke = wingletsStepHandler.startDrawWinglets(dots, clusterInfo)
+    curClusterInfo, mapClassIdDotIndexStroke, liMainContour = wingletsStepHandler.startDrawWinglets(dots, clusterInfo)
+    drawMainContourHandler.drawTwoPointLine(curClusterInfo, mapClassIdDotIndexStroke)
     drawWingletsHandler.generateWings(curClusterInfo, mapClassIdDotIndexStroke)
     drawHandler.endDraw()
 

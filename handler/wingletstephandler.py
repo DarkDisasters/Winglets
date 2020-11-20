@@ -18,6 +18,7 @@ class WingletsStepHandler():
     m_mapClassIdDotIndexStroke = {}
     m_mapClassIdDotIndexStrokeBag = {}
     m_WC_ClassIDPointDis_minmax = {}
+    m_test_mainContour = {}
 
     m_xMin = 0
     m_xMax = 0
@@ -53,8 +54,6 @@ class WingletsStepHandler():
     def sortIsovalue(self, mapIsovalueContour):
         liSortedIsovalueStr = []
         liIsovalueStr = list(mapIsovalueContour.keys())
-        # print('mapIsovalueContour', mapIsovalueContour)
-        # print('liIsovalueStr', liIsovalueStr)
         liNewIsovalue = []
 
         for i in range(len(liIsovalueStr)):
@@ -73,7 +72,7 @@ class WingletsStepHandler():
 
     def getRadialIntersection(self, pos1, pos2, contour):
         centroidPos = Point(pos1[0], pos1[1])
-        # ？1500 不知道是干什么的
+        # centroidPos = Point(1500 * pos1[0] - 1500 * pos2[0], 1500 * pos1[1] - 1500 * pos2[1])
         dataPos = Point(1500 * pos2[0] - 1500 * pos1[0], 1500 * pos2[1] - 1500 * pos1[1])
         # dataPos = Point(1500 * pos2[0], 1500 * pos2[1])
         # dataPos = Point(pos2[0] - pos1[0], pos2[1] - pos1[1])
@@ -92,15 +91,23 @@ class WingletsStepHandler():
         liIntersections = centroidAlongLinePath.intersection(contourPath)
         liIntersectionsCoords = []
         if (liIntersections.type == 'MultiLineString'):
+            print('multiLineString')
             listLiIntersections = list(liIntersections)
             for i in range(len(listLiIntersections)):
-                curIntersectionLineStringCoords = list(listLiIntersections[i].coords)
-                liIntersectionsCoords.append(curIntersectionLineStringCoords[0])
-                liIntersectionsCoords.append(curIntersectionLineStringCoords[1])
+                if i == 0:
+                    curIntersectionLineStringCoords = list(listLiIntersections[i].coords)
+                    print('curDot1', centroidPos)
+                    print('pos2', pos2)
+                    print('curDot2', dataPos)
+                    print('curIntersectionLineStringCoords', curIntersectionLineStringCoords)
+                    # liIntersectionsCoords.append(curIntersectionLineStringCoords[0])
+                    liIntersectionsCoords.append(curIntersectionLineStringCoords[1])
                 # liIntersectionsCoords.append(list(listLiIntersections[i].coords))
             # liIntersectionsCoords= list(listLiIntersections[0].coords)
         else:
             liIntersectionsCoords = list(centroidAlongLinePath.intersection(contourPath).coords)
+            # print('liIntersectionsCoords', liIntersectionsCoords)
+            # print('liIntersectionsCoords[1]', liIntersectionsCoords[1])
 
         #chose the closest one
         minDistance = 1e6
@@ -113,11 +120,35 @@ class WingletsStepHandler():
         if (minIndex == -1):
             return {'pos': [], 'index': -1}    
     	
+        minDistanceOnContour = 1e6
+        minIndexOnContour = -1
+        curIntersectionPos = [liIntersectionsCoords[minIndex][0], liIntersectionsCoords[minIndex][1]]
+        for i in range(len(contour)):
+            dis_temp_onContour = math.sqrt(math.pow(curIntersectionPos[0] - contour[i][0], 2) + math.pow(curIntersectionPos[1] - contour[i][1], 2))
+            if dis_temp_onContour < minDistanceOnContour:
+                minIndexOnContour = i
+                minDistanceOnContour = dis_temp_onContour
+
+        # if minDistanceOnContour < 5:
+        #     return {
+        #         # 'pos': [liIntersectionsCoords[minIndex][0], liIntersectionsCoords[minIndex][1]],
+        #         'pos': curIntersectionPos,
+        #         #? intersections[minIndex].index
+        #         'index': minIndexOnContour
+        #     }
+        # else:
+        #     print('curDistance > 1', minDistanceOnContour)
+        # if minDistanceOnContour > 3:
+        #     print('curDistance > 1', minDistanceOnContour)
+
+        # contour.insert(minIndexOnContour, curIntersectionPos)
+
         return {
-            'pos': [liIntersectionsCoords[minIndex][0], liIntersectionsCoords[minIndex][1]],
+            # 'pos': [liIntersectionsCoords[minIndex][0], liIntersectionsCoords[minIndex][1]],
+            'pos': curIntersectionPos,
             #? intersections[minIndex].index
-            'index': minIndex
-        }
+            'index': minIndexOnContour
+            }
         
 
 
@@ -164,7 +195,8 @@ class WingletsStepHandler():
     # ? spcanvas.js第3211行，有很多判断，只选取了 gestalt的
     def getLengthSpecialCase(self, curCurveLength, curSI):
         s = 8
-        curveLength = s + curSI * 15
+        # ? 本来是15, 但是太短了
+        curveLength = s + curSI * 18
         if curveLength < s:
             curveLength = s
         return curveLength
@@ -187,6 +219,7 @@ class WingletsStepHandler():
             newCurve = curveBag['dots']
 
             mapIndexCurve[curDotIndex] = {
+                'originDot': curveBag['originDot'],
                 'dotType': dotType,
                 'curve': newCurve,
                 'level': sortIsovalueIndex,
@@ -219,7 +252,7 @@ class WingletsStepHandler():
         mapIndexCurve = {}
         mapIndexStrokeBag = {}
 
-        step = (self.m_xMax - self.m_xMin) / 100
+        step = (self.m_xMax - self.m_xMin) / 100    # step = 8
         mapDotIndexIsoBag = {}
         minLength = 1e6
         maxLength = -1e6
@@ -248,7 +281,7 @@ class WingletsStepHandler():
                     if(lowIsoIndex < minLowIsoIndex):
                         minLowIsoIndex = lowIsoIndex
 
-            # 因为上面的循环不能运行，lowIsoIndex = 0，lowIsovalueStr为最外层contour的Isovalue，upperIsoIndex=1，minLowIsoIndex = 0
+            #? 得清楚这几个是干嘛的, 是为了记录离点最近的isovalue和isovalue对应的contour的index嘛 因为上面的循环不能运行，lowIsoIndex = 0，lowIsovalueStr为最外层contour的Isovalue，upperIsoIndex=1，minLowIsoIndex = 0
             if lowIsoIndex == -1:
                 lowIsoIndex = len(liSortedIsovalueStr) - 1
                 lowIsovalueStr = liSortedIsovalueStr[lowIsoIndex]
@@ -264,6 +297,7 @@ class WingletsStepHandler():
             }
 
         # 为每个点添加winglets
+        # 不知道上面的循环时干嘛的, 都是对 dots遍历, 上面几乎没做什么, 只是将lowIsoIndex等值存入, 且都是初始化时的值
         for i in range(len(dots)):
             curDot = dots[i]
             cellColumnIndex = math.floor((curDot[0] - self.m_xMin) / step)
@@ -303,13 +337,17 @@ class WingletsStepHandler():
             for p in range(len(mapIsovalueCanvasContour[lowIsovalueStr])):
                 liCandiateContour.append(mapIsovalueCanvasContour[lowIsovalueStr][p])
             #？不懂这个地方的用处，
-            if(upperIsovalueStr in mapIsovalueCanvasContour.keys()):
-                for p in range(len(mapIsovalueCanvasContour[upperIsovalueStr])):
-                    liCandiateContour.append(mapIsovalueCanvasContour[upperIsovalueStr][p])
-            # 将插值得到的contour中最外层Isovalue值得contour赋给了mapInterContour，并把个Isovalue下得contour添加在了liCandiateContour，？感觉不对
-            mapInterContours = mapIsovalueInterContours[lowIsovalueStr]
-            for keys_temp in mapInterContours:
-                liCandiateContour.append(mapInterContours[keys_temp])
+            # if(upperIsovalueStr in mapIsovalueCanvasContour.keys()):
+            #     for p in range(len(mapIsovalueCanvasContour[upperIsovalueStr])):
+            #         liCandiateContour.append(mapIsovalueCanvasContour[upperIsovalueStr][p])
+            # # 将插值得到的contour中最外层Isovalue值得contour赋给了mapInterContour，并把个Isovalue下得contour添加在了liCandiateContour，？感觉不对
+            # mapInterContours = mapIsovalueInterContours[lowIsovalueStr]
+            # for keys_temp in mapInterContours:
+            #     liCandiateContour.append(mapInterContours[keys_temp])
+            
+            # print('liCandiateContour len', len(liCandiateContour))
+            # if len(liCandiateContour) != 1:
+            #     print('liCandiateContour', liCandiateContour)
             
             centroidPos = mapIsovalueStrCentroids[lowIsovalueStr][0]
             minDistance = 1e6
@@ -321,7 +359,8 @@ class WingletsStepHandler():
                     curIntersectPos = curIntersection['pos']
                     distance_temp = (curIntersectPos[0] - curDot[0]) * (curIntersectPos[0] - curDot[0]) + (curIntersectPos[1] - curDot[1]) * (curIntersectPos[1] - curDot[1])
                     if(minDistance > distance_temp):
-                        closeContour = liCandiateContour[j]
+                        # 只是将contour中值赋值给了closeContour
+                        closeContour = liCandiateContour[j][:]
                         closePointIndex = curIntersection['index']
                         closePos = curIntersectPos
                         closeContourIndex = j
@@ -338,7 +377,23 @@ class WingletsStepHandler():
                             closePos = dot_temp
                             closeContourIndex = j
                             minDistance = distance_temp
+            
+            # 将 closePos与就是交点插入closeContour里, 改变closePointIndex, 并将随后的index整体加一
+            tempLeftIndex = closePointIndex - 1 
+            tempRightIndex = closePointIndex + 1 
+            if closePointIndex == len(closeContour)-1:
+                tempRightIndex = 0
+            if closePointIndex == 0:
+                tempLeftIndex = len(closeContour)-1
+            leftPosToClosePosDis = self.geoInstance.getDis(closeContour[tempLeftIndex], closePos)
+            rightPosToClosePosDis = self.geoInstance.getDis(closeContour[tempRightIndex], closePos)
+            if leftPosToClosePosDis < rightPosToClosePosDis:
+                closeContour.insert(closePointIndex, closePos)
+            else:
+                closeContour.insert(tempRightIndex, closePos)
+                closePointIndex = tempRightIndex
 
+            # ? 这个应该时临时存储每个点 最近的contour
             tempContourKey = str(lowIsoIndex) + '_' + str(closeContourIndex)
             if tempContourKey not in mapIsovalueIndexContour.keys():
                 mapIsovalueIndexContour[tempContourKey] = closeContour
@@ -368,6 +423,7 @@ class WingletsStepHandler():
                 'dotType': dotType,
                 'dots': [],
                 'longdots': [],
+                'originDot': curDot,
                 'sortIsovalueIndex': lowIsoIndex,
                 'centroid': centroid,
                 'sihoutte': sihoutte,
@@ -386,6 +442,8 @@ class WingletsStepHandler():
             # else:
                 # curveLength = self.getLengthBySI(sensitivity)
             curveLength = self.getLengthSpecialCase(curveLength, sihoutte)
+            # 
+            # curveLength = 20
 
             if(curveLength > maxLength):
                 maxLength = curveLength
@@ -430,11 +488,12 @@ class WingletsStepHandler():
                             if tobeAddPointIndex < 0:
                                 # ? name = 4的时候 tobeAddPointIndex = len(closeContour) - 1 和 tobeAddPointIndex = 0时数据点是一样的
                                 # tobeAddPointIndex = len(closeContour) - 1
-                                tobeAddPointIndex = len(closeContour) - 2
+                                print('left: pointIndex < 0')
+                                tobeAddPointIndex = len(closeContour) - 1
                                 # print('tobeAddPointIndex < 0',tobeAddPointIndex)
                                 # print('tobeAddPointIndex[0]',closeContour[0])
                                 # print('tobeAddPointIndex[len(closeContour) - 1]',closeContour[len(closeContour) - 1])
-                            leftLength -= tobeAddPointIndex
+                            leftLength -= tobeAddLength
                             leftPos = tobeAddPos
                             tobeAddPos = closeContour[tobeAddPointIndex]
                             tobeAddLength = self.geoInstance.getDis(leftPos, tobeAddPos)
@@ -481,29 +540,31 @@ class WingletsStepHandler():
                     #         self.m_drawInterContour['dots2'].append(interPos)
                     #         curveBag['dots'].append([interPos[0] + diffVector[0], interPos[1] + diffVector[1]])
                     if rightLength != 0:
-                        leftPos = closePos
+                        rightPos = closePos
                         tobeAddPointIndex = closePointIndex + 1
                         if tobeAddPointIndex >= len(closeContour):
+                            print('cccc')
                             tobeAddPointIndex = 0
                         tobeAddPos = closeContour[tobeAddPointIndex]
                         # if tobeAddPos is None:
-                        tobeAddLength = self.geoInstance.getDis(leftPos, tobeAddPos)
+                        tobeAddLength = self.geoInstance.getDis(rightPos, tobeAddPos)
                         while tobeAddLength <= rightLength:
                             self.m_drawInterContour['dots2'].append(tobeAddPos)
                             curveBag['dots'].append([tobeAddPos[0] + diffVector[0], tobeAddPos[1] + diffVector[1]])
                             tobeAddPointIndex += 1
                             if tobeAddPointIndex >= len(closeContour):
+                                print('right: pointIndex >= len(closeContour)')
                                 tobeAddPointIndex = 0
                             rightLength -= tobeAddLength
                             # ? spcanvas.js中第3172行是leftPos leftPos = tobeAddPos
-                            leftPos = tobeAddPos
+                            rightPos = tobeAddPos
                             tobeAddPos = closeContour[tobeAddPointIndex]
                             # ? spcanvas.js 第 3174行也是leftPos
-                            tobeAddLength = self.geoInstance.getDis(leftPos, tobeAddPos)
+                            tobeAddLength = self.geoInstance.getDis(rightPos, tobeAddPos)
 
                         if rightLength < tobeAddLength:
                             # ? spcanvas.js 3177行也是leftPos
-                            interPos = self.geoInstance.getPosinLine(leftPos, tobeAddPos, rightLength)
+                            interPos = self.geoInstance.getPosinLine(rightPos, tobeAddPos, rightLength)
                             self.m_drawInterContour['dots2'].append(interPos)
                             curveBag['dots'].append([interPos[0] + diffVector[0], interPos[1] + diffVector[1]])
                 else:
@@ -543,7 +604,8 @@ class WingletsStepHandler():
                     curDots2 = data[curCluster2]
                     for q in range(len(curDots2)):
                         curDot2 = curDots2[q]
-                        curDistance = distanceOpeInstance.getDifClassDotDistance([curDot1['x'], curDot2['y']], [curDot2['x'], curDot2['y']])
+                        # curDistance = distanceOpeInstance.getDifClassDotDistance([curDot1['x'], curDot1['y']], [curDot2['x'], curDot2['y']])
+                        curDistance = self.geoInstance.getDis([curDot1['x'], curDot1['y']], [curDot2['x'], curDot2['y']])
                         self.m_mapDisMatrix[str(curCluster1) + '_' + str(p) + '-' + str(curCluster2) + '_' + str(q)] = curDistance
                         self.m_mapDisMatrix[str(curCluster2) + '_' + str(q) + '-' + str(curCluster1) + '_' + str(p)] = curDistance
     
@@ -573,12 +635,15 @@ class WingletsStepHandler():
                 avgA = 0
                 #avgA为和同一类点求距离
                 for q in range(len(curLiDots1)):
+                    # if self.m_mapDisMatrix[str(curClusterId1) + '_' + str(p) + '-' + str(curClusterId1) + '_' + str(q)] == 0:
+                    #     print('hhhhhhhh')
                     if((str(curClusterId1) + '_' + str(p) + '-' + str(curClusterId1) + '_' + str(q)) in self.m_mapDisMatrix):
                         avgA += self.m_mapDisMatrix[str(curClusterId1) + '_' + str(p) + '-' + str(curClusterId1) + '_' + str(q)]
                     else:
+                        print('avgA test None')
                         avgA += 5
                 avgA /= len(curLiDots1)
-                sihoutte = 0
+                sihoutte = None
                 avgB = 1e6
                 for j in range(len(clusterInfo)):
                     if (i == j):
@@ -589,12 +654,19 @@ class WingletsStepHandler():
                     for k in range(len(curLiDots2)):
                         if (curClusterId1 > curClusterId2):
                             if((str(curClusterId2) + '_' + str(k) + '-' + str(curClusterId1) + '_' + str(p)) in self.m_mapDisMatrix == False):
+                                print('avgB test None')
                                 tempAvgB += 10
                             else:
+                                if self.m_mapDisMatrix[str(curClusterId2) + '_' + str(k) + '-' + str(curClusterId1) + '_' + str(p)] == 0:
+                                    print('hhhhh2')
                                 tempAvgB += self.m_mapDisMatrix[str(curClusterId2) + '_' + str(k) + '-' + str(curClusterId1) + '_' + str(p)]
                         else:
                             if((str(curClusterId1) + '_' + str(p) + '-' + str(curClusterId2) + '_' + str(k)) in self.m_mapDisMatrix == False):
+                                print('avgB test None')
                                 tempAvgB += 10
+                            else:
+                                if self.m_mapDisMatrix[str(curClusterId1) + '_' + str(p) + '-' + str(curClusterId2) + '_' + str(k)] == 0:
+                                    print('hhhhh3')
                                 tempAvgB += self.m_mapDisMatrix[str(curClusterId1) + '_' + str(p) + '-' + str(curClusterId2) + '_' + str(k)]
                     # ? 只用计算该店与各个类分别的距离再选择其中最小的？
                     tempAvgB /= len(curLiDots2)
@@ -647,6 +719,7 @@ class WingletsStepHandler():
             mapCounts = clusterInfo[i]['counts']
             mainContour = clusterInfo[i]['maincontour']
             mainIsovalue = clusterInfo[i]['mainIsovalue']
+            self.m_test_mainContour[curClusterId] = mainContour
 
             mapMainIsoContour = {}
             mapDotIndexDeepIsoIndex = {}
@@ -658,13 +731,11 @@ class WingletsStepHandler():
 
             outContour = []
             # spcanvas.js第1575行有几个if判断，不知道选哪个
-            # outIsovalue = liSortedIsovalueStr[1]
-            # outIsovalue = liSortedIsovalueStr[0]
-            # outContour = mapContours[outIsovalue][0]
             outIsovalue = mainIsovalue
             outContour = mainContour
 
             # 根据公共轮廓插值，并根据中心点与该点连线与contour的交集找到在contour上离该点最近的点
+            # ? 如果 只用最外层的contour作为标准，那插值的作用
             mapNewIndexContours = self.interpolateContourSelf(outContour, 20)
 
             mapNewCanvasContours = {}   #存放的是最外层的最开始生成的公共contour
@@ -672,6 +743,8 @@ class WingletsStepHandler():
             mapNewCanvasContours[outIsovalue] = [outContour]
             mapNewIsovalueInnerContours[outIsovalue] = mapNewIndexContours
 
+            # result = self.preLocate(curDots, liSihoutteIndex, liSensitivity, liKDE, 
+            #     mapNewCanvasContours, mapNewIsovalueInnerContours, [outIsovalue])
             result = self.preLocate(curDots, liSihoutteIndex, liSensitivity, liKDE, 
                 mapNewCanvasContours, mapNewIsovalueInnerContours, [outIsovalue])
             
@@ -692,10 +765,6 @@ class WingletsStepHandler():
             self.m_WC_ClassIDPointDis_minmax[curClusterId] = result[3]
         return clusterInfo
 
-    def addDotCurves_svg(self, toAddSVG, curClassId, dots, mapIndexCurve, strokeColr):
-        for i in range(len(dots)):
-            curCurve = mapIndexCurve['curve']
-
     def startDrawWinglets(self, dotsData, clusterInfo):
         liClusterInfo = clusterInfo['clusters']
         canvasRange = clusterInfo['canvasRange']
@@ -710,7 +779,7 @@ class WingletsStepHandler():
         curClusterInfo = self.computeDotStrokes(liClusterInfo)
         # print('self.m_mapClassIdDotIndexStroke', self.m_mapClassIdDotIndexStroke)
         # self.computeColorMap(liClusterInfo)
-        return curClusterInfo, self.m_mapClassIdDotIndexStroke
+        return curClusterInfo, self.m_mapClassIdDotIndexStroke, self.m_test_mainContour
 
 
 

@@ -6,6 +6,11 @@ from skimage import measure;
 from shapely.geometry import Point;
 from shapely.geometry import Polygon;
 
+import seaborn as sns
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
 class Distance():
     def distanceCompute(self, dotInfo):
         sourceAndTarget = [];
@@ -38,7 +43,9 @@ class KDE():
 
     def dot2Canvas(self, dotxy):
         #? 为啥是100 - 
+        # ? 为啥 dotxy的 0 1 元素换位了
         dot = [dotxy[1], 100 - dotxy[0]]
+        # dot = [dotxy[1], dotxy[0]]
         scale = 8
         return [scale * dot[0], scale * dot[1]] 
 
@@ -56,9 +63,12 @@ class KDE():
         values = np.vstack([m1, m2]);
         kernel = stats.gaussian_kde(values)
         Z = np.reshape(kernel(positions).T, X.shape)
-        # ? 为什么要转 90°, 不转在 669->627->116->13会报错liPos没有
-        # return np.rot90(Z)
-        return Z
+        # drawKDEZX, drawKDEZY = np.reshape(kernel(positions).T, (2, 5000))
+        # p1 = sns.kdeplot(drawKDEZX, drawKDEZY, cmap="Blues", shade=True, shade_lowest=True, )
+
+        # plt.show()
+        return np.rot90(Z)
+        # return Z
 
 
     def getContours(self, Z, dots):
@@ -68,17 +78,19 @@ class KDE():
         liIsovalue = []
         minDensity = Z.ravel().min()
         maxDensity = Z.ravel().max()
-        # ?不知道该不该加, 因为不加最低的isoValue为 1e-9, 比1e-1小,但是liIsovalue为 0.1, 1e-09 
+        # ?不知道该不该加, 因为不加最低的isoValue为 1e-9, 比1e-1小,但是liIsovalue为 0.1, 1e-09 ,但是为什么加上后就可以 在计算kde是rotate90°并且画的contour没问题了
         # liIsovalue.append(1e-1)
 
         #根据设定的baseValue和isoPosNum按密度分段，将范围的每个值存入liIsoValue
         for i in range(isoPosNum):
             liIsovalue.append(baseValue + i * (maxDensity - baseValue)/isoPosNum)
         
+        # print('liIsovalue', liIsovalue)
+        
         #遍历设定的密度范围的分段值
         for i in range(len(liIsovalue)):
             #按照当前的 isoValue 生成contours
-            curContours = measure.find_contours(Z, liIsovalue[i])
+            curContours = measure.find_contours(Z, liIsovalue[i], fully_connected='high')
 
             curIsovalue = liIsovalue[i]
             #存放转化后的contours以及增加的信息
@@ -100,6 +112,7 @@ class KDE():
                 curCanvasContour = self.convert2Canvas(contour)
                 curLiContours.append({
                     'contour': curCanvasContour,
+                    # 'contour': contour,
                     'count': 0
                 });
                 #按照当前的contour生成polygon，后面用来统计当前contour生成的polygon中点的个数
@@ -118,9 +131,6 @@ class KDE():
             if (len(curLiContours) != 0):
                 # 将contour和count信息以对象形式返回，且key是初始生成的各个isoValue
                 mapIsovalueContours[str(curIsovalue)] = curLiContours
-                # print('count', mapIsoValueContours[str(curIsoValue)][0]['count'])
-            if i == 0:
-                print('cur mapIsovalueContours', mapIsovalueContours[str(curIsovalue)])
         return mapIsovalueContours
         
 
@@ -164,8 +174,6 @@ class KDEHandler():
             liDots = KDEContour.listZip(m1, m2);
 
             Z1 = KDEContour.kdeCore(m1, m2, xmin, xmax, ymin, ymax);
-            
-            print('Z1', Z1.shape)
 
             curDensity = list(Z1.ravel())
             curTransferDot = self.turpleToList(zip(list(m1), list(m2)))
@@ -226,8 +234,8 @@ class KDEHandler():
                 # 进行了比较precount - maxCount > 点数量的87%说明已经发生了骤减，少了13%的点，可以选择外层的contour，
                 # 如果没有的话，说明maxCount的点很多很多，选取这个contour当前isoValue生成的众多contour的代表也是可以的
                 # print('maxContour', maxContour)
-                print('preCount', preCount)
-                print('maxCount', maxCount)
+                # print('preCount', preCount)
+                # print('maxCount', maxCount)
                 if(stopCompare == False):
                     if((preCount - maxCount) > int(preCount * 0.13)):
                         mainContour = preContour
@@ -241,7 +249,7 @@ class KDEHandler():
                     mapBezierContour[Isovalue] = liNewContour;
                     mapIsoContourCount[Isovalue] = liNewCount
 
-            print('maincontour', mainContour)
+            # print('maincontour', mainContour)
             liCluster.append({
                 'classId': classId,
                 'dots': liDots,
@@ -254,7 +262,6 @@ class KDEHandler():
                 'counts': mapIsoContourCount,
                 'maincontour': mainContour,
                 'mainIsovalue': mainIsovalue,
-                'm12': [m1, m2]
             })
         return liModifiedDots, {'clusters': liCluster, 'canvasRange': [xmin, xmax, ymin, ymax]}
 
