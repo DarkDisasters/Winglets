@@ -73,7 +73,7 @@ class WingletsStepHandler():
     def getRadialIntersection(self, pos1, pos2, contour):
         centroidPos = Point(pos1[0], pos1[1])
         # centroidPos = Point(1500 * pos1[0] - 1500 * pos2[0], 1500 * pos1[1] - 1500 * pos2[1])
-        dataPos = Point(1500 * pos2[0] - 1500 * pos1[0], 1500 * pos2[1] - 1500 * pos1[1])
+        dataPos = Point(3000 * pos2[0] - 3000 * pos1[0] + pos1[0], 3000 * pos2[1] - 3000 * pos1[1] + pos1[1])
         # dataPos = Point(1500 * pos2[0], 1500 * pos2[1])
         # dataPos = Point(pos2[0] - pos1[0], pos2[1] - pos1[1])
         centroidAlongLinePath = LineString([centroidPos, dataPos])
@@ -105,7 +105,9 @@ class WingletsStepHandler():
                 # liIntersectionsCoords.append(list(listLiIntersections[i].coords))
             # liIntersectionsCoords= list(listLiIntersections[0].coords)
         else:
+            # liIntersectionsCoords = list(centroidAlongLinePath.intersection(contourPath).coords)
             liIntersectionsCoords = list(centroidAlongLinePath.intersection(contourPath).coords)
+            liIntersectionsCoords = [liIntersectionsCoords[1]]
             # print('liIntersectionsCoords', liIntersectionsCoords)
             # print('liIntersectionsCoords[1]', liIntersectionsCoords[1])
 
@@ -337,13 +339,13 @@ class WingletsStepHandler():
             for p in range(len(mapIsovalueCanvasContour[lowIsovalueStr])):
                 liCandiateContour.append(mapIsovalueCanvasContour[lowIsovalueStr][p])
             #？不懂这个地方的用处，
-            # if(upperIsovalueStr in mapIsovalueCanvasContour.keys()):
-            #     for p in range(len(mapIsovalueCanvasContour[upperIsovalueStr])):
-            #         liCandiateContour.append(mapIsovalueCanvasContour[upperIsovalueStr][p])
-            # # 将插值得到的contour中最外层Isovalue值得contour赋给了mapInterContour，并把个Isovalue下得contour添加在了liCandiateContour，？感觉不对
-            # mapInterContours = mapIsovalueInterContours[lowIsovalueStr]
-            # for keys_temp in mapInterContours:
-            #     liCandiateContour.append(mapInterContours[keys_temp])
+            if(upperIsovalueStr in mapIsovalueCanvasContour.keys()):
+                for p in range(len(mapIsovalueCanvasContour[upperIsovalueStr])):
+                    liCandiateContour.append(mapIsovalueCanvasContour[upperIsovalueStr][p])
+            # 将插值得到的contour中最外层Isovalue值得contour赋给了mapInterContour，并把个Isovalue下得contour添加在了liCandiateContour，？感觉不对
+            mapInterContours = mapIsovalueInterContours[lowIsovalueStr]
+            for keys_temp in mapInterContours:
+                liCandiateContour.append(mapInterContours[keys_temp])
             
             # print('liCandiateContour len', len(liCandiateContour))
             # if len(liCandiateContour) != 1:

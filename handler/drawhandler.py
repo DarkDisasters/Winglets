@@ -42,17 +42,65 @@ class ColorMap():
 globalColorHandler = ColorMap()
 
 class DrawCircle():
+    colorRadius = 3.5
+    curCommonFateData = []
+
     def drawCircleTest(self, clusterInfo):
         print('drawCircle')
         # print('dots', dots)
-        colorRadius = 3.5
         for i in range(len(clusterInfo)):
             curClassIdDots = clusterInfo[i]['transferDots']
             curClassId = clusterInfo[i]['classId']
             for j in range(len(curClassIdDots)):
                 curClassIdCurDot = curClassIdDots[j]
                 # 用tkinter画圆形
-                cv.create_oval(curClassIdCurDot[0]-colorRadius, curClassIdCurDot[1]-colorRadius, curClassIdCurDot[0]+colorRadius, curClassIdCurDot[1]+colorRadius, fill=globalColorHandler.colorDict[curClassId])
+                cv.create_oval(curClassIdCurDot[0]-self.colorRadius, curClassIdCurDot[1]-self.colorRadius, curClassIdCurDot[0]+self.colorRadius, curClassIdCurDot[1]+self.colorRadius, fill=globalColorHandler.colorDict[curClassId])
+
+    def commonFateCircle(self, clusterInfo):
+        print('common fate effect')
+        for i in range(len(clusterInfo)):
+            curCommonFateDict = {}
+            
+            curClassIdDots = clusterInfo[i]['transferDots']
+            curClassId = clusterInfo[i]['classId']
+            curCentroid = clusterInfo[i]['centroid']
+
+            curCommonFateDict['classId'] = clusterInfo[i]['classId']
+            curCommonFateDict['commonFateDot'] = []
+
+            # 数据举例
+            # [{  'classId':1, 
+            #     'commonFateDot':[
+            #                         [
+            #                             [dot1Interpolate1X,dot1Interpolate1Y], 
+            #                             [dot1Interpolate2X,dot1Interpolate2Y], 
+            #                             [dot1Interpolate3X,dot1Interpolate3Y]
+            #                         ],
+            #                         [
+            #                             [dot2Interpolate1X,dot2Interpolate1Y], 
+            #                             [dot2Interpolate2X,dot2Interpolate2Y], 
+            #                             [dot2Interpolate3X,dot2Interpolate3Y]
+            #                         ],
+            #                         ...
+            #                     ]
+            #  }, 
+            #  {'classId':5, 'commonFateDot': []},
+            #  ...
+            # ]
+            
+            for j in range(len(curClassIdDots)):
+                curCommonFateDot = []
+                curVector = [40 * (curClassIdDots[j][0] - curCentroid[0]), 40 * (curClassIdDots[j][1] - curCentroid[1])]
+
+                for k in range(4):
+                    curCommonFateDot.append([curVector[0] / (4-j), curVector[1] / (4-j)])
+                curCommonFateDict['commonFateDot'].append(curCommonFateDot)
+        curCommonFateData.append(curCommonFateDict)
+
+        for i in range(len(curCommonFateData)):
+            curCommonFateClassId = curCommonFateData[i]['classId']
+
+
 
 class DrawKDE():
     def drawKDEMap(self, clusterInfo):

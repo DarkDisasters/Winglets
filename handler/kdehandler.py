@@ -3,6 +3,7 @@ import numpy as np;
 from scipy import stats;
 from skimage import measure;
 
+from handler.geoOperation import getGeoInfo;
 from shapely.geometry import Point;
 from shapely.geometry import Polygon;
 
@@ -135,6 +136,8 @@ class KDE():
         
 
 class KDEHandler():
+    geoInstance = getGeoInfo()
+
     def getXY(self, dotInfo):
         liX = []
         liY = []
@@ -250,9 +253,12 @@ class KDEHandler():
                     mapIsoContourCount[Isovalue] = liNewCount
 
             # print('maincontour', mainContour)
+            curCentroid = self.geoInstance.getCentroid(mainContour)
+        
             liCluster.append({
                 'classId': classId,
                 'dots': liDots,
+                'centroid': curCentroid,
                 'transferDots': curTransferDot,
                 'density': curDensity,
                 'minDensity': Z1.ravel().min(),
