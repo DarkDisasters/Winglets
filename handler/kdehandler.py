@@ -82,6 +82,26 @@ class KDE():
         # ?不知道该不该加, 因为不加最低的isoValue为 1e-9, 比1e-1小,但是liIsovalue为 0.1, 1e-09 ,但是为什么加上后就可以 在计算kde是rotate90°并且画的contour没问题了
         # liIsovalue.append(1e-1)
 
+        testDensity = baseValue + 9 * (maxDensity - baseValue)/isoPosNum
+        testMaxContours = measure.find_contours(Z, testDensity, fully_connected='high')
+        testMaxPolygonArr = []
+        testMaxContainPointCount = 0
+        maxDensityPoints = []
+        for n, contour in enumerate(testMaxContours):
+            contour = contour.tolist()
+            testMaxCanvasContour = self.convert2Canvas(contour)
+            testMaxPolygon = Polygon(testMaxCanvasContour)
+            testMaxPolygonArr.append(testMaxPolygon)
+        for dot in dots:
+                point = Point([dot['x'], dot['y']])
+                for index_temp in range(len(testMaxPolygonArr)):
+                    polygon = testMaxPolygonArr[index_temp]
+                    if(polygon.contains(point) == True):
+                        testMaxContainPointCount += 1
+                    maxDensityPoints.append([dot['x'], dot['y']])
+        # print('testMaxContainPointCount', testMaxContainPointCount)
+
+
         #根据设定的baseValue和isoPosNum按密度分段，将范围的每个值存入liIsoValue
         for i in range(isoPosNum):
             liIsovalue.append(baseValue + i * (maxDensity - baseValue)/isoPosNum)
@@ -132,7 +152,7 @@ class KDE():
             if (len(curLiContours) != 0):
                 # 将contour和count信息以对象形式返回，且key是初始生成的各个isoValue
                 mapIsovalueContours[str(curIsovalue)] = curLiContours
-        return mapIsovalueContours
+        return mapIsovalueContours, maxDensityPoints
         
 
 class KDEHandler():
@@ -184,7 +204,7 @@ class KDEHandler():
 
             # 生成初始的contour，返回的是以isovalue为key的对象
             # 每个key对应以当前isovalue生成的一个或多个contour以及该contour里面包含的点的数量
-            transferContour = KDEContour.getContours(Z1, dotsXYData)
+            transferContour, maxDensityPoints = KDEContour.getContours(Z1, dotsXYData)
 
             #将有getContours函数中提取的isoValue存放在liIsoValue中并排序
             liIsovalue = []
@@ -268,6 +288,7 @@ class KDEHandler():
                 'counts': mapIsoContourCount,
                 'maincontour': mainContour,
                 'mainIsovalue': mainIsovalue,
+                'maxDensityPoints': maxDensityPoints
             })
         return liModifiedDots, {'clusters': liCluster, 'canvasRange': [xmin, xmax, ymin, ymax]}
 

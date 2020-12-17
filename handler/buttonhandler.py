@@ -1,15 +1,18 @@
 class ButtonOperation(): 
+    isCommonFateDisplay = False
     isIntersectionPosDisplay = False
     isMainContourDisplay = False
     isTwoPointLineState = False
     isContourDisplay = False
     isWingletsDisplay = True
 
+    commonFateState = None
     intersectionPosState = None
     mainContourState = None
     twoPointLineState = None
     contourState = None
     wingletsState = None
+    
 
     def orihiddenElement(self, curCanvas, tagName):
         print('curButtonTag', tagName)
@@ -17,7 +20,13 @@ class ButtonOperation():
         curControlState = None
         curControlDisplay = None
 
-        if tagName == 'intersectionPos':
+        if tagName == 'commonFate':
+            self.isCommonFateDisplay = not self.isCommonFateDisplay
+            if self.isCommonFateDisplay:
+                curControlState = 'normal'
+            else:
+                curControlState = 'hidden'
+        elif tagName == 'intersectionPos':
             self.isIntersectionPosDisplay = not self.isIntersectionPosDisplay
             if self.isIntersectionPosDisplay:
                 curControlState = 'normal'

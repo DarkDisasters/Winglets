@@ -17,14 +17,16 @@ def outputDots(fieldsName):
 
     dots = myDB.getDots(fieldsName)['dots']
     modifiedDots, clusterInfo = myKdeHandler.computeKDE(dots)
+    drawHandler.getClusterInfo(clusterInfo['clusters'])
     drawCircleHandler.drawCircleTest(clusterInfo['clusters'])
+    # drawCircleHandler.drawCommonFateCircle(clusterInfo['clusters'])
     # drawKDEHandler.drawKDEMap(clusterInfo['clusters'])
     drawContourHandler.drawContour(clusterInfo['clusters'])
     drawMainContourHandler.drawMainContour(clusterInfo['clusters'])
     print('*******')
-    curClusterInfo, mapClassIdDotIndexStroke, liMainContour = wingletsStepHandler.startDrawWinglets(dots, clusterInfo)
-    drawMainContourHandler.drawTwoPointLine(curClusterInfo, mapClassIdDotIndexStroke)
-    drawWingletsHandler.generateWings(curClusterInfo, mapClassIdDotIndexStroke)
+    # curClusterInfo, mapClassIdDotIndexStroke, liMainContour = wingletsStepHandler.startDrawWinglets(dots, clusterInfo)
+    # drawMainContourHandler.drawTwoPointLine(curClusterInfo, mapClassIdDotIndexStroke)
+    # drawWingletsHandler.generateWings(curClusterInfo, mapClassIdDotIndexStroke)
     drawHandler.endDraw()
 
 # cv.pack()
