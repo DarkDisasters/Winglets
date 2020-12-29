@@ -50,10 +50,25 @@ class DrawCircle():
     commonFateData = []
     commonFateTimerArr = []
     commonFateGlobalInterval = 5
+    globalMaxDensityPointsArr = []
 
-    def drawCircleTest(self, clusterInfo):
+    def drawProximityCircle(self, proximityPointsArr):
         print('drawCircle')
         # print('dots', dots)
+        # self.globalMaxDensityPointsArr = globalMaxDensityPoints
+        for i in range(len(proximityPointsArr)):
+            curClassIdDots = proximityPointsArr[i]['curClassProximityPoints']
+            curClassId = proximityPointsArr[i]['classId']
+
+            for j in range(len(curClassIdDots)):
+                curClassIdCurDot = curClassIdDots[j]
+                # 用tkinter画圆形
+                curCircle = cv.create_oval(curClassIdCurDot[0]-self.colorRadius, curClassIdCurDot[1]-self.colorRadius, curClassIdCurDot[0]+self.colorRadius, curClassIdCurDot[1]+self.colorRadius, tags="proximityDot",fill=globalColorHandler.colorDict[curClassId])
+    
+    def drawCircleTest(self, clusterInfo, globalMaxDensityPoints):
+        print('drawCircle')
+        # print('dots', dots)
+        self.globalMaxDensityPointsArr = globalMaxDensityPoints
         for i in range(len(clusterInfo)):
             curClassCircleArr = []
             curClassCircleDict = {}
@@ -99,12 +114,13 @@ class DrawCircle():
         
         # curTimer.start()
 
-    
-    def drawCommonFateCircle(self, clusterInfo):
+    def drawCommonFateCircleByPointAlone(self, clusterInfo):
         print('common fate effect')
+        print('globalMaxDensityPoints', self.globalMaxDensityPointsArr)
+
         cycleCount = 60
         # cycleCount = 30
-        moveMaxDistance = 30
+        moveMaxDistance = 50
         everyDistance = moveMaxDistance / cycleCount
 
         for i in range(len(clusterInfo)):
@@ -119,13 +135,15 @@ class DrawCircle():
             curMaxDensityPoints = clusterInfo[i]['maxDensityPoints']
 
             centroidCircleRadius = self.colorRadius + 3
-            cv.create_oval(curCentroid[0]-centroidCircleRadius, curCentroid[1]-centroidCircleRadius, curCentroid[0]+centroidCircleRadius, curCentroid[1]+centroidCircleRadius, tags="centroid",fill='black')
+            # cv.create_oval(curCentroid[0]-centroidCircleRadius, curCentroid[1]-centroidCircleRadius, curCentroid[0]+centroidCircleRadius, curCentroid[1]+centroidCircleRadius, tags="centroid",fill='black')
 
             curCommonFateDict['classId'] = clusterInfo[i]['classId']
             curCommonFateDict['commonFateDot'] = []
             curCommonFateDict['curVector'] = []
 
-            curMaxDensityPoint = curMaxDensityPoints[math.floor(len(curMaxDensityPoints) / 2)]
+            # curMaxDensityPoint = curMaxDensityPoints[math.floor(len(curMaxDensityPoints) / 2)]
+            curMaxDensityPoint = self.globalMaxDensityPointsArr[i]
+            
             curVector = [(curMaxDensityPoint[0] - curCentroid[0]), (curMaxDensityPoint[1] - curCentroid[1])]
             # curVector = [(curCentroid[0] - curClassIdDots[j][0]), (curCentroid[1] - curClassIdDots[j][0])]
             
@@ -196,6 +214,127 @@ class DrawCircle():
                 curCommonFateDotVector = self.commonFateData[j]
                 curOriginCircle = self.originCircleInfoArr[j]['originCircle']
 
+
+                for k in range(len(curOriginCircle)):
+                    # curCommonFateDotVector = self.commonFateData[j]['curVector'][k]
+                    cv.move(curOriginCircle[k], curCommonFateDotVector[0]/cycleCount, curCommonFateDotVector[1]/cycleCount)
+                    # if i == 0:
+                    #     # ?有点问题,暂时以continue跳过这个过程
+                    #     continue
+                    #     # print('curOriginCircle[k]', curOriginCircle[k])
+                    #     # print('curCommonFateDots[k]', curCommonFateDots[k])
+                    #     print("clusterInfo[j]['transferDots'][k]", clusterInfo[j]['transferDots'][k])
+                    #     cv.move(curOriginCircle[k], curCommonFateDots[k][i][0]-clusterInfo[j]['transferDots'][k][0], curCommonFateDots[k][i][1]-clusterInfo[j]['transferDots'][k][1])
+                    # else:
+                    #     # print('curCommonFateDots[k][0]', curCommonFateDots[k][0])
+                    #     cv.move(curOriginCircle[k], curCommonFateDots[k][i][0] - curCommonFateDots[k][i-1][0], curCommonFateDots[k][i][1] - curCommonFateDots[k][i-1][1])
+            cv.update()
+            # time.sleep(0.05)
+            time.sleep(0.025)
+        # self.commonFateControlFunc()
+
+    
+
+    def drawCommonFateCircle(self, clusterInfo):
+        print('common fate effect')
+        print('globalMaxDensityPoints', self.globalMaxDensityPointsArr)
+
+        cycleCount = 60
+        # cycleCount = 30
+        moveMaxDistance = 50
+        everyDistance = moveMaxDistance / cycleCount
+
+        for i in range(len(clusterInfo)):
+            curCommonFateDict = {}
+            
+            curTimer = Timer(5, self.commonFateTimerFunc, (i, 1))
+            self.commonFateTimerArr.append(curTimer)
+
+            curClassIdDots = clusterInfo[i]['transferDots']
+            curClassId = clusterInfo[i]['classId']
+            curCentroid = clusterInfo[i]['centroid']
+            curMaxDensityPoints = clusterInfo[i]['maxDensityPoints']
+
+            centroidCircleRadius = self.colorRadius + 3
+            # cv.create_oval(curCentroid[0]-centroidCircleRadius, curCentroid[1]-centroidCircleRadius, curCentroid[0]+centroidCircleRadius, curCentroid[1]+centroidCircleRadius, tags="centroid",fill='black')
+
+            curCommonFateDict['classId'] = clusterInfo[i]['classId']
+            curCommonFateDict['commonFateDot'] = []
+            curCommonFateDict['curVector'] = []
+
+            # curMaxDensityPoint = curMaxDensityPoints[math.floor(len(curMaxDensityPoints) / 2)]
+            curMaxDensityPoint = self.globalMaxDensityPointsArr[i]
+            
+            curVector = [(curMaxDensityPoint[0] - curCentroid[0]), (curMaxDensityPoint[1] - curCentroid[1])]
+            # curVector = [(curCentroid[0] - curClassIdDots[j][0]), (curCentroid[1] - curClassIdDots[j][0])]
+            
+            # curCommonFateDot = [[curClassIdDots[j][0], curClassIdDots[j][1]], [curVector[0] + curClassIdDots[j][0], curVector[1] + curClassIdDots[j][1]]]
+            # for k in range(4):
+            #     curCommonFateDot.append([curVector[0] / (4-j), curVector[1] / (4-j)])
+            if abs(curVector[0]) > abs(curVector[1]):
+                base = curVector[0] / moveMaxDistance
+                curVector[0] /= base
+                curVector[1] /= base
+            else:
+                base = curVector[1] / moveMaxDistance
+                curVector[0] /= base
+                curVector[1] /= base
+            
+            self.commonFateData.append(curVector)
+
+            # 数据举例
+            # [{  'classId':1, 
+            #     'commonFateDot':[
+            #                         [
+            #                             [dot1Interpolate1X,dot1Interpolate1Y], 
+            #                             [dot1Interpolate2X,dot1Interpolate2Y], 
+            #                             [dot1Interpolate3X,dot1Interpolate3Y]
+            #                         ],
+            #                         [
+            #                             [dot2Interpolate1X,dot2Interpolate1Y], 
+            #                             [dot2Interpolate2X,dot2Interpolate2Y], 
+            #                             [dot2Interpolate3X,dot2Interpolate3Y]
+            #                         ],
+            #                         ...
+            #                     ]
+            #  }, 
+            #  {'classId':5, 'commonFateDot': []},
+            #  ...
+            # ]
+            # for j in range(len(curClassIdDots)):
+            #     curCommonFateDot = []
+                # curVector = [(curClassIdDots[j][0] - curCentroid[0]), (curClassIdDots[j][1] - curCentroid[1])]
+                # # curVector = [(curCentroid[0] - curClassIdDots[j][0]), (curCentroid[1] - curClassIdDots[j][0])]
+                
+                # # curCommonFateDot = [[curClassIdDots[j][0], curClassIdDots[j][1]], [curVector[0] + curClassIdDots[j][0], curVector[1] + curClassIdDots[j][1]]]
+                # # for k in range(4):
+                # #     curCommonFateDot.append([curVector[0] / (4-j), curVector[1] / (4-j)])
+                # if abs(curVector[0]) > abs(curVector[1]):
+                #     base = curVector[0] / moveMaxDistance
+                #     curVector[0] /= base
+                #     curVector[1] /= base
+                # else:
+                #     base = curVector[1] / moveMaxDistance
+                #     curVector[0] /= base
+                #     curVector[1] /= base
+            
+                # for k in range(cycleCount):
+                #     # if i == 0 and j == 0 and k == 10:
+                #     #     print('curClassIdDots[j][0] - curCentroid[0]', curClassIdDots[j][0] - curCentroid[0])
+                #     #     print('curVector[0]', curVector[0])
+                #     #     print('test', curVector[0] / cycleCount * (k+1)*everyDistance)
+                #     curCommonFateDot.append([curClassIdDots[j][0] + (k+1) * curVector[0] / cycleCount, curClassIdDots[j][1] + (k+1) * curVector[1] / cycleCount])
+                # curCommonFateDict['commonFateDot'].append(curCommonFateDot)
+                # curCommonFateDict['curVector'].append(curVector)
+            # self.commonFateData.append(curCommonFateDict)
+         
+        for i in range(cycleCount):
+            for j in range(len(self.commonFateData)):
+                # curCommonFateClassId = self.commonFateData[j]['classId']
+                # curCommonFateDots = self.commonFateData[j]['commonFateDot']
+                curCommonFateDotVector = self.commonFateData[j]
+                curOriginCircle = self.originCircleInfoArr[j]['originCircle']
+                
 
                 for k in range(len(curOriginCircle)):
                     # curCommonFateDotVector = self.commonFateData[j]['curVector'][k]
@@ -302,7 +441,11 @@ class DrawAllHandler():
     wingletsButton = None 
     testClusterInfo = []
     testCircleHander = None
+    maxDensityPointsArr = []
+    proximityPointsArr = []
     isCommonFateStart = False
+    notCommonFateAndProximity = True
+    isProximityStart = False
     clickIntervalOk = True
 
     def init(self):
@@ -315,6 +458,7 @@ class DrawAllHandler():
         return drawCircleHandler, drawKDEHandler, drawMainContourHandler, drawContourHandler, drawWingletsHandler
 
     def initButton(self):
+        self.proximityButton = Button(root, text="proximity", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: self.startProximity())
         self.commonFateButton = Button(root, text="commonFate", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: self.startCommonFate())
         self.intersectionPosButton = Button(root, text="intersectionPos", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: buttonOpeInstance.orihiddenElement(cv, 'intersectionPos'))
         self.mainContourButton = Button(root, text="mainContour", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: buttonOpeInstance.orihiddenElement(cv, 'mainContourLine'))
@@ -322,36 +466,71 @@ class DrawAllHandler():
         self.contourButton = Button(root, text="Contour", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: buttonOpeInstance.orihiddenElement(cv, 'contourLine'))
         self.wingletsButton = Button(root, text="Winglets", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: buttonOpeInstance.orihiddenElement(cv, 'wingletsLine'))
 
-    def getClusterInfo(self, clusterInfo):
+    def getInfo(self, clusterInfo, maxDensityPointsArr, proximityPointsArr):
         self.testClusterInfo = clusterInfo
+        self.maxDensityPointsArr = maxDensityPointsArr
+        self.proximityPointsArr = proximityPointsArr
     
     def startCommonFate(self):
         if not self.clickIntervalOk:
             print('click interval not ok, program is running, please wait')
             return 0
-        # ? 第二次点击commonFate仍有bug
-        if not self.isCommonFateStart:
+        # ? 先点proximity再点commonFate,commonFate函数运行但是没动画
+        if not self.isCommonFateStart and self.notCommonFateAndProximity:
             print('commonFate state', self.isCommonFateStart)
             self.clickIntervalOk = False
             self.testCircleHander.drawCommonFateCircle(self.testClusterInfo)
             self.isCommonFateStart = True
-            time.sleep(3)
+            self.notCommonFateAndProximity = False
+            self.isProximityStart = False
+            time.sleep(2)
             self.clickIntervalOk = True
             print('clickIntervalOk')
-        else:
+        elif not self.notCommonFateAndProximity and self.isCommonFateStart:
             print('commonFate state', self.isCommonFateStart)
             self.clickIntervalOk = False
             cv.delete('originDot')
-            self.testCircleHander.drawCircleTest(self.testClusterInfo)
+            cv.delete('proximityDot')
+            self.testCircleHander.drawCircleTest(self.testClusterInfo, self.maxDensityPointsArr)
             self.isCommonFateStart = False
-            time.sleep(3)
+            self.notCommonFateAndProximity = True
+            self.isProximityStart = False
+            time.sleep(2)
             self.clickIntervalOk = True
             print('clickIntervalOk')
         
-    
+    def startProximity(self):
+        if not self.clickIntervalOk:
+            print('click interval not ok, program is running, please wait')
+            return 0
+
+        if not self.notCommonFateAndProximity and self.isProximityStart:
+            print('proximity state', self.isProximityStart)
+            self.clickIntervalOk = False
+            cv.delete('proximityDot')
+            self.testCircleHander.drawCircleTest(self.testClusterInfo, self.maxDensityPointsArr)
+            self.isCommonFateStart = False
+            self.notCommonFateAndProximity = True
+            self.isProximityStart = False
+            time.sleep(2)
+            self.clickIntervalOk = True
+            print('clickIntervalOk')
+        elif not self.isProximityStart and self.notCommonFateAndProximity:
+            print('commonFate state', self.isCommonFateStart)
+            self.clickIntervalOk = False
+            cv.delete('originDot')
+            self.testCircleHander.drawProximityCircle(self.proximityPointsArr)
+            self.isCommonFateStart = False
+            self.notCommonFateAndProximity = False 
+            self.isProximityStart = True
+            time.sleep(2)
+            self.clickIntervalOk = True
+            print('clickIntervalOk')
+
     def endDraw(self):
         # self.contourButton.pack(side=RIGHT)
         # self.wingletsButton.pack(side=RIGHT)
+        self.proximityButton.place(x=1025, y=350, width=100)
         self.commonFateButton.place(x=1025, y=400, width=100)
         self.intersectionPosButton.place(x=1150, y=400, width=100)
         self.mainContourButton.place(x=1025, y=450, width=100)

@@ -2,6 +2,7 @@ import math;
 import numpy as np;
 from scipy import stats;
 from skimage import measure;
+from sklearn.cluster import KMeans
 
 from handler.geoOperation import getGeoInfo;
 from shapely.geometry import Point;
@@ -71,6 +72,40 @@ class KDE():
         return np.rot90(Z)
         # return Z
 
+    def getGlobalMaxDensityPoint(self, globalZ, curClassDots):
+        mapIsovalueContours = {}
+        isoPosNum = 10
+        baseValue = 1e-9
+        liIsovalue = []
+        minDensity = globalZ.ravel().min()
+        maxDensity = globalZ.ravel().max()
+        proximityLowDensityPoints = []
+
+        for i in range(isoPosNum-1, 0, -1):
+            thresholdDensity = baseValue + i * (maxDensity - baseValue)/isoPosNum
+            thresholdContours = measure.find_contours(globalZ, thresholdDensity, fully_connected='high')
+            thresholdPolygonArr = []
+            maxDensityPoints = []
+            thresholdContainPointCount = 0
+
+            for n, contour in enumerate(thresholdContours):
+                contour = contour.tolist()
+                thresholdCanvasContour = self.convert2Canvas(contour)
+                thresholdPolygon = Polygon(thresholdCanvasContour)
+                thresholdPolygonArr.append(thresholdPolygon)
+            for dot in curClassDots:
+                    point = Point([dot['x'], dot['y']])
+                    for index_temp in range(len(thresholdPolygonArr)):
+                        polygon = thresholdPolygonArr[index_temp]
+                        if(polygon.contains(point) == True):
+                            thresholdContainPointCount += 1
+                            maxDensityPoints.append([dot['x'], dot['y']])
+                        else:
+                            proximityLowDensityPoints.append([dot['x'], dot['y']])
+            if thresholdContainPointCount < 30 and thresholdContainPointCount > 0:
+                break
+        print('count', thresholdContainPointCount)
+        return maxDensityPoints, proximityLowDensityPoints
 
     def getContours(self, Z, dots):
         mapIsovalueContours = {}
@@ -98,7 +133,7 @@ class KDE():
                     polygon = testMaxPolygonArr[index_temp]
                     if(polygon.contains(point) == True):
                         testMaxContainPointCount += 1
-                    maxDensityPoints.append([dot['x'], dot['y']])
+                        maxDensityPoints.append([dot['x'], dot['y']])
         # print('testMaxContainPointCount', testMaxContainPointCount)
 
 
@@ -172,8 +207,17 @@ class KDEHandler():
             curListData[curListData.index(item)] = list(item)
         return curListData
 
+    def getAllClassDot(self, data):
+        liAllDots = []
+        for classId, dotsXYData in data.items():
+            for i in range(len(dotsXYData)):
+                liAllDots.append(dotsXYData[i])
+        return liAllDots
+    
     def computeKDE(self, data):
         # print('test data', data)
+        estimator = KMeans(n_clusters=3)#构造聚类器
+        # result = estimator.fit_predict(data)
         DistanceInstance = Distance()
         KDEContour = KDE()
         liCluster = [];
@@ -186,6 +230,29 @@ class KDEHandler():
         xmax = 800;
         ymin = 0;
         ymax = 800;
+
+        allDotsXYData = self.getAllClassDot(data)
+        globalM1, globalM2 = self.getXY(allDotsXYData)
+        globalZ1 = KDEContour.kdeCore(globalM1, globalM2, xmin, xmax, ymin, ymax)
+        globalMaxDensityPoints = []
+        proximityPoints = []
+
+        for classId, dotsXYData in data.items():
+            curProximityPoints = []
+            curMaxDensityPoints, curLowDensityPoints = KDEContour.getGlobalMaxDensityPoint(globalZ1, dotsXYData)
+            # print('len', len(curMaxDensityPoints))
+            # print('curMaxDensityPoints', curMaxDensityPoints)
+            if len(curMaxDensityPoints) > 3:
+                proximityCentoridPoints = estimator.fit(curMaxDensityPoints).cluster_centers_.tolist()
+                # print('curLowDensityPoints',curLowDensityPoints)
+                curProximityPoints = curLowDensityPoints + proximityCentoridPoints
+                # print('centroid', estimator.fit(curMaxDensityPoints).cluster_centers_.tolist())
+            else:
+                curProximityPoints = curLowDensityPoints + curMaxDensityPoints
+            globalMaxDensityPoints.append(curMaxDensityPoints[math.floor(len(curMaxDensityPoints) / 2)])
+            # print('curProximityPoints',curProximityPoints)
+            proximityPoints.append({'classId': classId, 'curClassProximityPoints': curProximityPoints})
+        # globalTransferContour, globalMaxDensityPoints = KDEContour.getContours(globalZ1, allDotsXYData)
 
         #对每个classId计算kde
         for classId, dotsXYData in data.items():
@@ -290,5 +357,5 @@ class KDEHandler():
                 'mainIsovalue': mainIsovalue,
                 'maxDensityPoints': maxDensityPoints
             })
-        return liModifiedDots, {'clusters': liCluster, 'canvasRange': [xmin, xmax, ymin, ymax]}
+        return liModifiedDots, {'clusters': liCluster, 'canvasRange': [xmin, xmax, ymin, ymax]}, globalMaxDensityPoints, proximityPoints
 
