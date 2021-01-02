@@ -1,10 +1,27 @@
-Metadata-Version: 1.0
+Metadata-Version: 2.1
 Name: Winglets
 Version: 0.1.0
-Summary: Thesis Code
-Home-page: https://github.com/DarkDisasters/winglets_python
+Summary: Winglets by Python
+Home-page: https://github.com/DarkDisasters/Winglets_Python
 Author: Shuaiqi Wang
 Author-email: shuaiqiwang666@gmail.com
-License: UNKNOWN
-Description: UNKNOWN
+License: MIT
+Description: 
+        # Winglets_Python
+        
+        ## 代码步骤简要v0.1
+        1. 生成density map，会有很多个density值
+        2. 根据不同的density生成isoValue对应的contour
+        3. 找到应该保留的最外层contour
+        4. 根据最外层contour找到centroids，将最外城contour分成sampleNum份，再根据centroids和centroid对应的射线，求出与最外层contour的交集，根据交点插值生成里层的contourNum个contour
+        5. 遍历当前所有点，找到最近的contour上的最近的点，在contour上根据最近的点生成winglets的左边与右边（其实就是左右端点），然后根据向量计算，分别找到contour上左右点对应的原有点处的左右点，这样就可以根据原有点处的左右点生成满足对应contour弧度的位于原有点处的winglets
+        6. 根据第五步生成的点使用d3来画线段
 Platform: UNKNOWN
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: Implementation :: CPython
+Classifier: Programming Language :: Python :: Implementation :: PyPy
+Requires-Python: >=3.6.0
+Description-Content-Type: text/markdown

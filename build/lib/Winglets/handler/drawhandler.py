@@ -8,17 +8,14 @@ import tkinter.messagebox
 
 from tkinter import *
 
-import seaborn as sns
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 from threading import Timer;
 import time;
 import math;
 
 from .buttonhandler import ButtonOperation
 
-sns.set(style="ticks")
 
 buttonOpeInstance = ButtonOperation()
 
@@ -358,15 +355,15 @@ class DrawCircle():
 class DrawKDE():
     def drawKDEMap(self, clusterInfo):
         print('drawKDE')
-        liClusterInfo = clusterInfo['clusters']
-        for i in range(len(liClusterInfo)):
-            # curDensityX = liClusterInfo[i]['m12'][0]
-            # curDensityY = liClusterInfo[i]['m12'][1]
-            # sns.kdeplot(curDensityX, curDensityY, shade=True,color='r')
-            fig, ax = plt.subplots(num=100)
-            curDensity = liClusterInfo[i]['density']
-            im = ax.imshow(np.rot90(curDensity), cmap='Blues', extent=[0, 800, 0, 800])
-            plt.show()
+        # liClusterInfo = clusterInfo['clusters']
+        # for i in range(len(liClusterInfo)):
+        #     # curDensityX = liClusterInfo[i]['m12'][0]
+        #     # curDensityY = liClusterInfo[i]['m12'][1]
+        #     # sns.kdeplot(curDensityX, curDensityY, shade=True,color='r')
+        #     fig, ax = plt.subplots(num=100)
+        #     curDensity = liClusterInfo[i]['density']
+        #     im = ax.imshow(np.rot90(curDensity), cmap='Blues', extent=[0, 800, 0, 800])
+        #     plt.show()
 
 class DrawMainContour():
     def drawMainContour(self, clusterInfo):
