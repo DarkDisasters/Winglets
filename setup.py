@@ -14,7 +14,7 @@ from setuptools import find_packages, setup, Command
 # Package meta-data.
 NAME = 'Winglets'
 DESCRIPTION = 'Winglets by Python'
-URL = 'https://github.com/DarkDisasters/Winglets_Python'
+URL = 'https://github.com/DarkDisasters/Winglets'
 EMAIL = 'shuaiqiwang666@gmail.com'
 AUTHOR = 'Shuaiqi Wang'
 REQUIRES_PYTHON = '>=3.6.0'
