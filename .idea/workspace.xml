@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="3273e1a4-d9b2-4211-be82-70cbfe943a0d" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/Pro.ClusterHatch代码分析.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/canvasTest.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/handler/buttonhandler.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/handler/drawhandler.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/handler/geoOperation.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/handler/handler_all.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/handler/kdehandler.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/handler/mongohandler.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/handler/wingletstephandler.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/hello.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mao_KDE_raw.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/testAPI.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/testFile/packageTest/Pro.ClusterHatch代码分析.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/testFile/packageTest/canvasTest.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/testFile/packageTest/handler/buttonhandler.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/testFile/packageTest/handler/drawhandler.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/testFile/packageTest/handler/geoOperation.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/testFile/packageTest/handler/handler_all.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/testFile/packageTest/handler/kdehandler.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/testFile/packageTest/handler/mongohandler.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/testFile/packageTest/handler/wingletstephandler.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/testFile/packageTest/hello.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/testFile/packageTest/mao_KDE_raw.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/testFile/packageTest/server.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/testFile/packageTest/testAPI.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/testFile/packageTest/testFile/.ipynb_checkpoints/commonFateTest-checkpoint.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/testFile/packageTest/testFile/commonFateTest.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/testFile/packageTest/testFile/kdeTest/.ipynb_checkpoints/drawKDEMap-checkpoint.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/testFile/packageTest/testFile/kdeTest/drawKDEMap.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/testFile/packageTest/testFile/paperJSFuncByPy/testPath.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/testFile/packageTest/testFile/pythonAPITest/.ipynb_checkpoints/Untitled-checkpoint.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/testFile/packageTest/testFile/pythonAPITest/Untitled.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/testFile/packageTest/testFile/pythonjs_mixedProgram/paper.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/testFile/packageTest/testFile/pythonjs_mixedProgram/pyExecjs/test.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/testFile/packageTest/testFile/pythonjs_mixedProgram/pyExecjs/test.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/testFile/packageTest/testFile/shapelyTest/.ipynb_checkpoints/line&amp;intersection-checkpoint.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/testFile/packageTest/testFile/shapelyTest/line&amp;intersection.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/testFile/packageTest/testFile/timerOfPython/timerTest.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/testFile/packageTest/testFile/tkInter/.ipynb_checkpoints/Untitled-checkpoint.ipynb" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/testFile/packageTest/testFile/tkInter/Untitled.ipynb" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/testFile/packageTest" />
+  </component>
+  <component name="ProjectId" id="1mK3IpcnJDwrJqknMakNO3N9hbl" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="3273e1a4-d9b2-4211-be82-70cbfe943a0d" name="Default Changelist" comment="" />
+      <created>1609228379090</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1609228379090</updated>
+    </task>
+    <servers />
+  </component>
+</project>
