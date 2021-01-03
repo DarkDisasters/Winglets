@@ -19,7 +19,10 @@ class OperationHandler():
         self.wingletsStepHandler = WingletsStepHandler()
         self.drawHandler = DrawAllHandler()
         self.drawCircleHandler, self.drawKDEHandler, self.drawMainContourHandler, self.drawContourHandler, self.drawWingletsHandler = self.drawHandler.init()
-        
+    
+    def mapColor(self, colorArr, data):
+        self.drawHandler.initGlobalColor(colorArr, data)
+
     def drawWinglets(self, data):
         # dots = myDB.getDots(fieldsName)['dots']
         modifiedDots, clusterInfo, globalMaxDensityPoints, proximityPoints = self.kdeHandler.computeKDE(data)

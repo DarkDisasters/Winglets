@@ -36,10 +36,20 @@ cv = Canvas(root, width=1000, height=1000, bg='white', scrollregion=(-50, -50, 9
 
 
 class ColorMap():
-    colorDict = {'1': 'red', '2': 'blue', '3':'pink', '4': 'orange', '5':'purple', '6':'indigo', '7': 'brown', '8': 'green', '9': 'yellow'}
+    colorDict = {}
+    # {'1': 'red', '2': 'blue', '3':'pink', '4': 'orange', '5':'purple', '6':'indigo', '7': 'brown', '8': 'green', '9': 'yellow'}
     colorList = ['red', 'blue', 'pink', 'orange', 'purple', 'indigo']
+    def __init__(self, colorArr, data):
+        # if type == 'list':
+        #     for i in range(len(colorArr)):
+        #         self.colorDict[i] = colorArr[i]
+        # elif type == 'dict':
+        count = 0
+        for classId in data.keys():
+            self.colorDict[classId] = colorArr[count]
+            count += 1 
 
-globalColorHandler = ColorMap()
+globalColorHandler = None
 
 class DrawCircle():
     originCircleInfoArr = []
@@ -64,6 +74,7 @@ class DrawCircle():
     
     def drawCircleTest(self, clusterInfo, globalMaxDensityPoints):
         print('drawCircle')
+        # print('globalColorHandler', globalColorHandler.colorDict)
         # print('dots', dots)
         self.globalMaxDensityPointsArr = globalMaxDensityPoints
         for i in range(len(clusterInfo)):
@@ -453,6 +464,11 @@ class DrawAllHandler():
         drawContourHandler = DrawContour()
         drawWingletsHandler = DrawWinglets()
         return drawCircleHandler, drawKDEHandler, drawMainContourHandler, drawContourHandler, drawWingletsHandler
+
+    def initGlobalColor(self, colorArray, data):
+        global globalColorHandler
+        globalColorHandler = ColorMap(colorArray, data)
+        # print('globalColorHandler' ,globalColorHandler.colorDict)
 
     def initButton(self):
         self.proximityButton = Button(root, text="proximity", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: self.startProximity())
