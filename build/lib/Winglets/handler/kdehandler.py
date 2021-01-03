@@ -8,10 +8,10 @@ from .geoOperation import getGeoInfo;
 from shapely.geometry import Point;
 from shapely.geometry import Polygon;
 
-import seaborn as sns
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
+# import seaborn as sns
+# import numpy as np
+# import pandas as pd
+# import matplotlib.pyplot as plt
 
 class Distance():
     def distanceCompute(self, dotInfo):

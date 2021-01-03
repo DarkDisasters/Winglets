@@ -2,6 +2,8 @@ README.md
 setup.py
 Winglets/__init__.py
 Winglets/server.py
+Winglets/testInit.py
+Winglets/test_tkinter_mac.py
 Winglets.egg-info/PKG-INFO
 Winglets.egg-info/SOURCES.txt
 Winglets.egg-info/dependency_links.txt
@@ -9,6 +11,7 @@ Winglets.egg-info/top_level.txt
 Winglets/handler/__init__.py
 Winglets/handler/buttonhandler.py
 Winglets/handler/drawhandler.py
+Winglets/handler/drawhandler_test.py
 Winglets/handler/geoOperation.py
 Winglets/handler/handler_all.py
 Winglets/handler/kdehandler.py

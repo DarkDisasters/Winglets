@@ -3,34 +3,38 @@
 
 # from tkinter import *;
 
-import tkinter
-import tkinter.messagebox
+# import tkinter as tt 
+# import tkinter.messagebox
 
-from tkinter import *
+# from tkinter import *
 
-import numpy as np
+# import numpy as np
 # import pandas as pd
-from threading import Timer;
-import time;
-import math;
+# from threading import Timer;
 
-from .buttonhandler import ButtonOperation
+# import math;
+
+# from .buttonhandler import ButtonOperation
 
 
-buttonOpeInstance = ButtonOperation()
+# buttonOpeInstance = ButtonOperation()
+# import matplotlib
+# matplotlib.use("TkAgg")
+import tkinter as tk
+window = tk.Tk()
+# window.mainloop()
+# root = tt.Tk()
+# root.geometry('1300x1300')
+# # root.minsize(width=400, height=200)
+# root.resizable(1, 1)
 
-root = Tk();
-root.geometry('1300x1300')
-# root.minsize(width=400, height=200)
-root.resizable(1, 1)
-
-root.config(bg="white")
+# root.config(bg="white")
 # root.attributes('alpha', 0.65)
 # root.attributes('-topmost', 1)
 
 
-cv = Canvas(root, width=1000, height=1000, bg='white', scrollregion=(-50, -50, 950, 950))
-
+# cv = tt.Canvas(root, width=1000, height=1000, bg='white', scrollregion=(-50, -50, 950, 950))
+print('ttttt')
 
 
 
@@ -430,112 +434,112 @@ class DrawWinglets():
         print('Draw Winglets Done')
 
 class DrawAllHandler():
-    commonFateButton = None
-    intersectionPosButton = None
-    mainContourButton = None
-    twoPointLineButton = None
-    contourButton = None 
-    wingletsButton = None 
-    testClusterInfo = []
-    testCircleHander = None
-    maxDensityPointsArr = []
-    proximityPointsArr = []
-    isCommonFateStart = False
-    notCommonFateAndProximity = True
-    isProximityStart = False
-    clickIntervalOk = True
+    # commonFateButton = None
+    # intersectionPosButton = None
+    # mainContourButton = None
+    # twoPointLineButton = None
+    # contourButton = None 
+    # wingletsButton = None 
+    # testClusterInfo = []
+    # testCircleHander = None
+    # maxDensityPointsArr = []
+    # proximityPointsArr = []
+    # isCommonFateStart = False
+    # notCommonFateAndProximity = True
+    # isProximityStart = False
+    # clickIntervalOk = True
 
-    def init(self):
-        self.testCircleHander = drawCircleHandler = DrawCircle()
-        self.initButton()
-        drawKDEHandler = DrawKDE()
-        drawMainContourHandler = DrawMainContour()
-        drawContourHandler = DrawContour()
-        drawWingletsHandler = DrawWinglets()
-        return drawCircleHandler, drawKDEHandler, drawMainContourHandler, drawContourHandler, drawWingletsHandler
+    # def init(self):
+    #     self.testCircleHander = drawCircleHandler = DrawCircle()
+    #     # self.initButton()
+    #     drawKDEHandler = DrawKDE()
+    #     drawMainContourHandler = DrawMainContour()
+    #     drawContourHandler = DrawContour()
+    #     drawWingletsHandler = DrawWinglets()
+    #     return drawCircleHandler, drawKDEHandler, drawMainContourHandler, drawContourHandler, drawWingletsHandler
 
-    def initButton(self):
-        self.proximityButton = Button(root, text="proximity", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: self.startProximity())
-        self.commonFateButton = Button(root, text="commonFate", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: self.startCommonFate())
-        self.intersectionPosButton = Button(root, text="intersectionPos", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: buttonOpeInstance.orihiddenElement(cv, 'intersectionPos'))
-        self.mainContourButton = Button(root, text="mainContour", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: buttonOpeInstance.orihiddenElement(cv, 'mainContourLine'))
-        self.twoPointLineButton = Button(root, text="twoPointLine", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: buttonOpeInstance.orihiddenElement(cv, 'twoPointLine'))
-        self.contourButton = Button(root, text="Contour", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: buttonOpeInstance.orihiddenElement(cv, 'contourLine'))
-        self.wingletsButton = Button(root, text="Winglets", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: buttonOpeInstance.orihiddenElement(cv, 'wingletsLine'))
+    # def initButton(self):
+    #     self.proximityButton = tt.Button(root, text="proximity", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: self.startProximity())
+    #     self.commonFateButton = tt.Button(root, text="commonFate", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: self.startCommonFate())
+    #     self.intersectionPosButton = tt.Button(root, text="intersectionPos", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: buttonOpeInstance.orihiddenElement(cv, 'intersectionPos'))
+    #     self.mainContourButton = tt.Button(root, text="mainContour", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: buttonOpeInstance.orihiddenElement(cv, 'mainContourLine'))
+    #     self.twoPointLineButton = tt.Button(root, text="twoPointLine", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: buttonOpeInstance.orihiddenElement(cv, 'twoPointLine'))
+    #     self.contourButton = tt.Button(root, text="Contour", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: buttonOpeInstance.orihiddenElement(cv, 'contourLine'))
+    #     self.wingletsButton = tt.Button(root, text="Winglets", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: buttonOpeInstance.orihiddenElement(cv, 'wingletsLine'))
 
     def getInfo(self, clusterInfo, maxDensityPointsArr, proximityPointsArr):
         self.testClusterInfo = clusterInfo
         self.maxDensityPointsArr = maxDensityPointsArr
         self.proximityPointsArr = proximityPointsArr
     
-    def startCommonFate(self):
-        if not self.clickIntervalOk:
-            print('click interval not ok, program is running, please wait')
-            return 0
-        # ? 先点proximity再点commonFate,commonFate函数运行但是没动画
-        if not self.isCommonFateStart and self.notCommonFateAndProximity:
-            print('commonFate state', self.isCommonFateStart)
-            self.clickIntervalOk = False
-            self.testCircleHander.drawCommonFateCircle(self.testClusterInfo)
-            self.isCommonFateStart = True
-            self.notCommonFateAndProximity = False
-            self.isProximityStart = False
-            time.sleep(2)
-            self.clickIntervalOk = True
-            print('clickIntervalOk')
-        elif not self.notCommonFateAndProximity and self.isCommonFateStart:
-            print('commonFate state', self.isCommonFateStart)
-            self.clickIntervalOk = False
-            cv.delete('originDot')
-            cv.delete('proximityDot')
-            self.testCircleHander.drawCircleTest(self.testClusterInfo, self.maxDensityPointsArr)
-            self.isCommonFateStart = False
-            self.notCommonFateAndProximity = True
-            self.isProximityStart = False
-            time.sleep(2)
-            self.clickIntervalOk = True
-            print('clickIntervalOk')
+    # def startCommonFate(self):
+    #     if not self.clickIntervalOk:
+    #         print('click interval not ok, program is running, please wait')
+    #         return 0
+    #     # ? 先点proximity再点commonFate,commonFate函数运行但是没动画
+    #     if not self.isCommonFateStart and self.notCommonFateAndProximity:
+    #         print('commonFate state', self.isCommonFateStart)
+    #         self.clickIntervalOk = False
+    #         self.testCircleHander.drawCommonFateCircle(self.testClusterInfo)
+    #         self.isCommonFateStart = True
+    #         self.notCommonFateAndProximity = False
+    #         self.isProximityStart = False
+    #         time.sleep(2)
+    #         self.clickIntervalOk = True
+    #         print('clickIntervalOk')
+    #     elif not self.notCommonFateAndProximity and self.isCommonFateStart:
+    #         print('commonFate state', self.isCommonFateStart)
+    #         self.clickIntervalOk = False
+    #         cv.delete('originDot')
+    #         cv.delete('proximityDot')
+    #         self.testCircleHander.drawCircleTest(self.testClusterInfo, self.maxDensityPointsArr)
+    #         self.isCommonFateStart = False
+    #         self.notCommonFateAndProximity = True
+    #         self.isProximityStart = False
+    #         time.sleep(2)
+    #         self.clickIntervalOk = True
+    #         print('clickIntervalOk')
         
-    def startProximity(self):
-        if not self.clickIntervalOk:
-            print('click interval not ok, program is running, please wait')
-            return 0
+    # def startProximity(self):
+    #     if not self.clickIntervalOk:
+    #         print('click interval not ok, program is running, please wait')
+    #         return 0
 
-        if not self.notCommonFateAndProximity and self.isProximityStart:
-            print('proximity state', self.isProximityStart)
-            self.clickIntervalOk = False
-            cv.delete('proximityDot')
-            self.testCircleHander.drawCircleTest(self.testClusterInfo, self.maxDensityPointsArr)
-            self.isCommonFateStart = False
-            self.notCommonFateAndProximity = True
-            self.isProximityStart = False
-            time.sleep(2)
-            self.clickIntervalOk = True
-            print('clickIntervalOk')
-        elif not self.isProximityStart and self.notCommonFateAndProximity:
-            print('commonFate state', self.isCommonFateStart)
-            self.clickIntervalOk = False
-            cv.delete('originDot')
-            self.testCircleHander.drawProximityCircle(self.proximityPointsArr)
-            self.isCommonFateStart = False
-            self.notCommonFateAndProximity = False 
-            self.isProximityStart = True
-            time.sleep(2)
-            self.clickIntervalOk = True
-            print('clickIntervalOk')
+    #     if not self.notCommonFateAndProximity and self.isProximityStart:
+    #         print('proximity state', self.isProximityStart)
+    #         self.clickIntervalOk = False
+    #         cv.delete('proximityDot')
+    #         self.testCircleHander.drawCircleTest(self.testClusterInfo, self.maxDensityPointsArr)
+    #         self.isCommonFateStart = False
+    #         self.notCommonFateAndProximity = True
+    #         self.isProximityStart = False
+    #         time.sleep(2)
+    #         self.clickIntervalOk = True
+    #         print('clickIntervalOk')
+    #     elif not self.isProximityStart and self.notCommonFateAndProximity:
+    #         print('commonFate state', self.isCommonFateStart)
+    #         self.clickIntervalOk = False
+    #         cv.delete('originDot')
+    #         self.testCircleHander.drawProximityCircle(self.proximityPointsArr)
+    #         self.isCommonFateStart = False
+    #         self.notCommonFateAndProximity = False 
+    #         self.isProximityStart = True
+    #         time.sleep(2)
+    #         self.clickIntervalOk = True
+    #         print('clickIntervalOk')
 
-    def endDraw(self):
-        # self.contourButton.pack(side=RIGHT)
-        # self.wingletsButton.pack(side=RIGHT)
-        self.proximityButton.place(x=1025, y=350, width=100)
-        self.commonFateButton.place(x=1025, y=400, width=100)
-        self.intersectionPosButton.place(x=1150, y=400, width=100)
-        self.mainContourButton.place(x=1025, y=450, width=100)
-        self.twoPointLineButton.place(x=1150, y=450, width=100)
-        self.contourButton.place(x=1025, y=500, width=70)
-        self.wingletsButton.place(x=1110, y=500, width=70)
-        cv.place(x=0, y=0)
-        root.mainloop()
+    # def endDraw(self):
+    #     # self.contourButton.pack(side=RIGHT)
+    #     # self.wingletsButton.pack(side=RIGHT)
+    #     self.proximityButton.place(x=1025, y=350, width=100)
+    #     self.commonFateButton.place(x=1025, y=400, width=100)
+    #     self.intersectionPosButton.place(x=1150, y=400, width=100)
+    #     self.mainContourButton.place(x=1025, y=450, width=100)
+    #     self.twoPointLineButton.place(x=1150, y=450, width=100)
+    #     self.contourButton.place(x=1025, y=500, width=70)
+    #     self.wingletsButton.place(x=1110, y=500, width=70)
+    #     cv.place(x=0, y=0)
+    #     root.mainloop()
 
 
 

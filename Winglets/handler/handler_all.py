@@ -6,13 +6,6 @@ from .kdehandler import KDEHandler
 from .wingletstephandler import WingletsStepHandler
 from .drawhandler import DrawAllHandler
 
-# myDB = MONGODBHANDLER()
-# myDB.connectDB('First', 'localhost', 27017)
-
-# myKdeHandler = KDEHandler()
-# wingletsStepHandler = WingletsStepHandler()
-# cv = Canvas(root, bg='white')
-
 # class DataInputHandler():
 #     def __init__(self, inputType):
 #         self.dataInputType = inputType
@@ -46,25 +39,6 @@ class OperationHandler():
         self.drawHandler.endDraw()
     # def drawWinglets(self):
 
-
-# def outputDots(fieldsName):
-#     drawHandler = DrawAllHandler()
-#     drawCircleHandler, drawKDEHandler, drawMainContourHandler, drawContourHandler, drawWingletsHandler = drawHandler.init()
-
-#     dots = myDB.getDots(fieldsName)['dots']
-#     modifiedDots, clusterInfo, globalMaxDensityPoints, proximityPoints = myKdeHandler.computeKDE(dots)
-#     drawHandler.getInfo(clusterInfo['clusters'], globalMaxDensityPoints, proximityPoints)
-#     drawCircleHandler.drawCircleTest(clusterInfo['clusters'], globalMaxDensityPoints)
-#     # drawCircleHandler.drawProximityCircle(proximityPoints)
-#     # drawCircleHandler.drawCommonFateCircle(clusterInfo['clusters'])
-#     # drawKDEHandler.drawKDEMap(clusterInfo['clusters'])
-#     drawContourHandler.drawContour(clusterInfo['clusters'])
-#     drawMainContourHandler.drawMainContour(clusterInfo['clusters'])
-#     print('*******')
-#     curClusterInfo, mapClassIdDotIndexStroke, liMainContour = wingletsStepHandler.startDrawWinglets(dots, clusterInfo)
-#     drawMainContourHandler.drawTwoPointLine(curClusterInfo, mapClassIdDotIndexStroke)
-#     drawWingletsHandler.generateWings(curClusterInfo, mapClassIdDotIndexStroke)
-#     drawHandler.endDraw()
 
  
 

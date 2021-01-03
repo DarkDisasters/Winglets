@@ -1,8 +1,14 @@
+import os
+import json
 
-from .handler.handler_all import *
+# import sys
+# sys.path.insert(0, './')
+
+import handler.handler_all
+# from .handler.handler_all import *
 # from handler import handler_all as AllHandler
 # from .handler.handler_all import OperationHandler
-# from handler.handler_all import OperationHandler
+from handler.handler_all import OperationHandler
 # import handler.handler_all as AllHandler
 
 # setting = dict(
@@ -46,4 +52,10 @@ def draw(data, dataInputType='normal Array'):
     operationInstance.endDraw()
     # main()
 
+
+dataDict = {}
+f = open('./testFile.json', 'r')
+dataDict = json.loads(f.read())
+print('dataDict', dataDict)
+draw(dataDict['dots'])
 
