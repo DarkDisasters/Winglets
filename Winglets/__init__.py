@@ -5,45 +5,36 @@ from .handler.handler_all import *
 # from handler.handler_all import OperationHandler
 # import handler.handler_all as AllHandler
 
-# setting = dict(
-#     static_path=os.path.join(os.path.dirname(__file__), './'),
-#     template_path=os.path.join(os.path.dirname(__file__), './'),
+class ColorNotEnoughError(Exception):
+    def __init__(self, ErrorInfo):
+        super().__init__(self)
+        self.errorInfo = ErrorInfo
+    def __str__(self):
+        return self.errorInfo
 
-# )
-
-# url = []
-
-# application = tornado.web.Application(
-#     handlers=url,
-#     debug=True,
-#     **setting
-# )
-
-# serverPort = 30001
-# define("port", default=serverPort, help="run on the given port", type=int)
-
-
-# def main():
-#     tornado.options.parse_command_line()
-#     http_server = tornado.httpserver.HTTPServer(application)
-#     print('Development server is running at http://127.0.0.1:%s/' % options.port)
-#     print('Quit the server with Control-C')
-#     tornado.ioloop.IOLoop.instance().start()
-
-# if __name__ == '__main__':
-#     testName = 'dots'
-#     outputDots(testName)
-#     main()
-
-def draw(data, dataInputType='normal Array'):
+def draw(data, colorArray = ['red', 'blue', 'pink', 'orange', 'purple', 'indigo']):
     # outputDots(testName)
     operationInstance = OperationHandler()
-    operationInstance.drawWinglets(data)
-    if dataInputType == 'mongodbData':
-        print('input type', dataInputType)
+    dataDict = {}
+    if isinstance(data, list):
+        for i in range(len(data)):
+            dataDict[i] = []
+            for j in range(len(data[i])):
+                curDataDict = {}
+                curDataDict['x'] = data[i][j][0]
+                curDataDict['y'] = data[i][j][1]
+                dataDict[i].append(curDataDict)
     else:
-        print('input type', dataInputType)
+        dataDict = data
+    if len(colorArray) < len(dataDict.keys()):
+        # print('lenght dataDict', len(dataDict.keys()))
+        # try:
+        raise ColorNotEnoughError('colorArray length is not enough')
+        # except ColorNotEnoughError as e:
+        #     print(e)
+        # return 0
+    operationInstance.mapColor(colorArray, dataDict)
+    operationInstance.drawWinglets(dataDict)
     operationInstance.endDraw()
-    # main()
 
 

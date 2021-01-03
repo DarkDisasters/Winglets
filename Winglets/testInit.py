@@ -53,8 +53,13 @@ def draw(data, colorArray = ['red', 'blue', 'pink', 'orange', 'purple', 'indigo'
     operationInstance = OperationHandler()
     dataDict = {}
     if isinstance(data, list):
-        for i in range(data):
-            dataDict[i] = data[i]
+        for i in range(len(data)):
+            dataDict[i] = []
+            for j in range(len(data[i])):
+                curDataDict = {}
+                curDataDict['x'] = data[i][j][0]
+                curDataDict['y'] = data[i][j][1]
+                dataDict[i].append(curDataDict)
     else:
         dataDict = data
     if len(colorArray) < len(dataDict.keys()):
@@ -82,5 +87,6 @@ for curKey in dataDict['dots'].keys():
     for i in range(len(curArrDictData)):
         curKeyArr.append([curArrDictData[i]['x'], curArrDictData[i]['y']])
     dataArray.append(curKeyArr)
-print('dataArray', dataArray)
+# print('dataArray', dataArray)
+draw(dataArray)
 # draw(dataDict['dots'], ['#d7191c', '#fdae61', '#abdda4','#2b83ba'])
