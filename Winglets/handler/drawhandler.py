@@ -456,9 +456,9 @@ class DrawAllHandler():
     isProximityStart = False
     clickIntervalOk = True
 
-    def init(self):
+    def init(self, onlyWinglets, onlyCircle, onlyCommonFate, onlyProximity):
         self.testCircleHander = drawCircleHandler = DrawCircle()
-        self.initButton()
+        self.initButton(onlyWinglets, onlyCircle, onlyCommonFate, onlyProximity)
         drawKDEHandler = DrawKDE()
         drawMainContourHandler = DrawMainContour()
         drawContourHandler = DrawContour()
@@ -470,7 +470,31 @@ class DrawAllHandler():
         globalColorHandler = ColorMap(colorArray, data)
         # print('globalColorHandler' ,globalColorHandler.colorDict)
 
-    def initButton(self):
+    def initButton(self, onlyWinglets, onlyCircle, onlyCommonFate, onlyProximity):
+        if onlyCircle:
+            return 0
+        if onlyCommonFate:
+            self.commonFateButton = Button(root, text="commonFate", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: self.startCommonFate())
+            self.commonFateButton.place(x=1100, y=500, width=100)
+            return 0
+        elif onlyProximity:
+            self.proximityButton = Button(root, text="proximity", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: self.startProximity())
+            self.proximityButton.place(x=1100, y=500, width=100)
+            return 0
+        elif onlyWinglets:
+            self.mainContourButton = Button(root, text="mainContour", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: buttonOpeInstance.orihiddenElement(cv, 'mainContourLine'))
+            self.twoPointLineButton = Button(root, text="twoPointLine", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: buttonOpeInstance.orihiddenElement(cv, 'twoPointLine'))
+            self.contourButton = Button(root, text="Contour", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: buttonOpeInstance.orihiddenElement(cv, 'contourLine'))
+            self.intersectionPosButton = Button(root, text="intersectionPos", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: buttonOpeInstance.orihiddenElement(cv, 'intersectionPos'))
+            self.wingletsButton = Button(root, text="Winglets", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: buttonOpeInstance.orihiddenElement(cv, 'wingletsLine'))
+            
+            self.mainContourButton.place(x=1025, y=450, width=100)
+            self.twoPointLineButton.place(x=1150, y=450, width=100)
+            self.contourButton.place(x=1025, y=500, width=70)
+            self.intersectionPosButton.place(x=1110, y=500, width=100)
+            self.wingletsButton.place(x=1225, y=500, width=70)
+            return 0
+
         self.proximityButton = Button(root, text="proximity", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: self.startProximity())
         self.commonFateButton = Button(root, text="commonFate", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: self.startCommonFate())
         self.intersectionPosButton = Button(root, text="intersectionPos", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: buttonOpeInstance.orihiddenElement(cv, 'intersectionPos'))
@@ -478,6 +502,14 @@ class DrawAllHandler():
         self.twoPointLineButton = Button(root, text="twoPointLine", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: buttonOpeInstance.orihiddenElement(cv, 'twoPointLine'))
         self.contourButton = Button(root, text="Contour", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: buttonOpeInstance.orihiddenElement(cv, 'contourLine'))
         self.wingletsButton = Button(root, text="Winglets", bg='white', activebackground='#F0F0F0', bd=1, relief="ridge", command = lambda: buttonOpeInstance.orihiddenElement(cv, 'wingletsLine'))
+        
+        self.proximityButton.place(x=1025, y=350, width=100)
+        self.commonFateButton.place(x=1025, y=400, width=100)
+        self.intersectionPosButton.place(x=1150, y=400, width=100)
+        self.mainContourButton.place(x=1025, y=450, width=100)
+        self.twoPointLineButton.place(x=1150, y=450, width=100)
+        self.contourButton.place(x=1025, y=500, width=70)
+        self.wingletsButton.place(x=1110, y=500, width=70)
 
     def getInfo(self, clusterInfo, maxDensityPointsArr, proximityPointsArr):
         self.testClusterInfo = clusterInfo
@@ -543,13 +575,7 @@ class DrawAllHandler():
     def endDraw(self):
         # self.contourButton.pack(side=RIGHT)
         # self.wingletsButton.pack(side=RIGHT)
-        self.proximityButton.place(x=1025, y=350, width=100)
-        self.commonFateButton.place(x=1025, y=400, width=100)
-        self.intersectionPosButton.place(x=1150, y=400, width=100)
-        self.mainContourButton.place(x=1025, y=450, width=100)
-        self.twoPointLineButton.place(x=1150, y=450, width=100)
-        self.contourButton.place(x=1025, y=500, width=70)
-        self.wingletsButton.place(x=1110, y=500, width=70)
+        
         cv.place(x=0, y=0)
         root.mainloop()
 

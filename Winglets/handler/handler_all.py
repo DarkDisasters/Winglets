@@ -13,15 +13,20 @@ from .drawhandler import DrawAllHandler
 #         myDB.connectDB('First', 'localhost', 27017)
 
 class OperationHandler():
-    def __init__(self):
+    def __init__(self, onlyWinglets=True, onlyCircle=False, onlyCommonFate=False, onlyProximity=False):
         # self.curData = DataInputHandler()
         self.kdeHandler = KDEHandler()
         self.wingletsStepHandler = WingletsStepHandler()
         self.drawHandler = DrawAllHandler()
-        self.drawCircleHandler, self.drawKDEHandler, self.drawMainContourHandler, self.drawContourHandler, self.drawWingletsHandler = self.drawHandler.init()
+        self.drawCircleHandler, self.drawKDEHandler, self.drawMainContourHandler, self.drawContourHandler, self.drawWingletsHandler = self.drawHandler.init(onlyWinglets, onlyCircle, onlyCommonFate, onlyProximity)
     
     def mapColor(self, colorArr, data):
         self.drawHandler.initGlobalColor(colorArr, data)
+
+    def drawCircle(self, data):
+        modifiedDots, clusterInfo, globalMaxDensityPoints, proximityPoints = self.kdeHandler.computeKDE(data)
+        self.drawHandler.getInfo(clusterInfo['clusters'], globalMaxDensityPoints, proximityPoints)
+        self.drawCircleHandler.drawCircleTest(clusterInfo['clusters'], globalMaxDensityPoints)
 
     def drawWinglets(self, data):
         # dots = myDB.getDots(fieldsName)['dots']
@@ -34,10 +39,20 @@ class OperationHandler():
         self.drawContourHandler.drawContour(clusterInfo['clusters'])
         self.drawMainContourHandler.drawMainContour(clusterInfo['clusters'])
         # print('*******')
-        curClusterInfo, mapClassIdDotIndexStroke, liMainContour = self.wingletsStepHandler.startDrawWinglets(data, clusterInfo)
-        self.drawMainContourHandler.drawTwoPointLine(curClusterInfo, mapClassIdDotIndexStroke)
-        self.drawWingletsHandler.generateWings(curClusterInfo, mapClassIdDotIndexStroke)
-    
+        # curClusterInfo, mapClassIdDotIndexStroke, liMainContour = self.wingletsStepHandler.startDrawWinglets(data, clusterInfo)
+        # self.drawMainContourHandler.drawTwoPointLine(curClusterInfo, mapClassIdDotIndexStroke)
+        # self.drawWingletsHandler.generateWings(curClusterInfo, mapClassIdDotIndexStroke)
+
+    def drawCommonFateEffect(self, data):
+        modifiedDots, clusterInfo, globalMaxDensityPoints, proximityPoints = self.kdeHandler.computeKDE(data)
+        self.drawHandler.getInfo(clusterInfo['clusters'], globalMaxDensityPoints, proximityPoints)
+        self.drawCircleHandler.drawCircleTest(clusterInfo['clusters'], globalMaxDensityPoints)
+
+    def drawProximityEffect(self, data):
+        modifiedDots, clusterInfo, globalMaxDensityPoints, proximityPoints = self.kdeHandler.computeKDE(data)
+        self.drawHandler.getInfo(clusterInfo['clusters'], globalMaxDensityPoints, proximityPoints)
+        self.drawCircleHandler.drawCircleTest(clusterInfo['clusters'], globalMaxDensityPoints)
+
     def endDraw(self):
         self.drawHandler.endDraw()
     # def drawWinglets(self):
