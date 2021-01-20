@@ -4,6 +4,7 @@ from .handler.handler_all import *
 # from .handler.handler_all import OperationHandler
 # from handler.handler_all import OperationHandler
 # import handler.handler_all as AllHandler
+import math;
 
 class ColorNotEnoughError(Exception):
     def __init__(self, ErrorInfo):
@@ -23,8 +24,19 @@ def listTransDict(listData):
             dataDict[i].append(curDataDict)
     return dataDict
 
+def getMaxKey(curDict):
+    maxKeyValue = 0
+    for key in curDict.keys():
+        if maxKeyValue < int(key):
+            maxKeyValue = int(key)
+    return maxKeyValue
+
 def drawCirlce(data, colorArray = ['red', 'blue', 'pink', 'orange', 'purple', 'indigo'], onlyCicle=True):
-    operationInstance = OperationHandler(False, onlyCicle)
+    operationInstance = None
+    if not onlyCicle:
+        operationInstance = OperationHandler(False)
+    else:
+        operationInstance = OperationHandler(False, onlyCicle)
     dataDict = {}
     if isinstance(data, list):
         dataDict = listTransDict(data)
@@ -44,6 +56,7 @@ def drawWinglets(data, colorArray = ['red', 'blue', 'pink', 'orange', 'purple', 
         dataDict = listTransDict(data)
     else:
         dataDict = data
+    # if len(colorArray) < len(dataDict.keys()) or len(colorArray) < getMaxKey(dataDict):
     if len(colorArray) < len(dataDict.keys()):
         raise ColorNotEnoughError('colorArray length is not enough')
     operationInstance.mapColor(colorArray, dataDict)
@@ -57,6 +70,7 @@ def drawCommonFate(data, colorArray = ['red', 'blue', 'pink', 'orange', 'purple'
         dataDict = listTransDict(data)
     else:
         dataDict = data
+    # if len(colorArray) < len(dataDict.keys()) or len(colorArray) < getMaxKey(dataDict):
     if len(colorArray) < len(dataDict.keys()):
         raise ColorNotEnoughError('colorArray length is not enough')
     operationInstance.mapColor(colorArray, dataDict)
@@ -70,6 +84,7 @@ def drawProximity(data, colorArray = ['red', 'blue', 'pink', 'orange', 'purple',
         dataDict = listTransDict(data)
     else:
         dataDict = data
+    # if len(colorArray) < len(dataDict.keys()) or len(colorArray) < getMaxKey(dataDict):
     if len(colorArray) < len(dataDict.keys()):
         raise ColorNotEnoughError('colorArray length is not enough')
     operationInstance.mapColor(colorArray, dataDict)

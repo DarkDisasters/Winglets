@@ -13,8 +13,10 @@ from .drawhandler import DrawAllHandler
 #         myDB.connectDB('First', 'localhost', 27017)
 
 class OperationHandler():
+    onlyCircle = None
     def __init__(self, onlyWinglets=True, onlyCircle=False, onlyCommonFate=False, onlyProximity=False):
         # self.curData = DataInputHandler()
+        self.onlyCircle = onlyCircle
         self.kdeHandler = KDEHandler()
         self.wingletsStepHandler = WingletsStepHandler()
         self.drawHandler = DrawAllHandler()
@@ -39,9 +41,11 @@ class OperationHandler():
         self.drawContourHandler.drawContour(clusterInfo['clusters'])
         self.drawMainContourHandler.drawMainContour(clusterInfo['clusters'])
         # print('*******')
-        # curClusterInfo, mapClassIdDotIndexStroke, liMainContour = self.wingletsStepHandler.startDrawWinglets(data, clusterInfo)
-        # self.drawMainContourHandler.drawTwoPointLine(curClusterInfo, mapClassIdDotIndexStroke)
-        # self.drawWingletsHandler.generateWings(curClusterInfo, mapClassIdDotIndexStroke)
+        if self.onlyCircle:
+            return 0
+        curClusterInfo, mapClassIdDotIndexStroke, liMainContour = self.wingletsStepHandler.startDrawWinglets(data, clusterInfo)
+        self.drawMainContourHandler.drawTwoPointLine(curClusterInfo, mapClassIdDotIndexStroke)
+        self.drawWingletsHandler.generateWings(curClusterInfo, mapClassIdDotIndexStroke)
 
     def drawCommonFateEffect(self, data):
         modifiedDots, clusterInfo, globalMaxDensityPoints, proximityPoints = self.kdeHandler.computeKDE(data)

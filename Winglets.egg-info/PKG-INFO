@@ -1,21 +1,115 @@
 Metadata-Version: 2.1
 Name: Winglets
-Version: 0.1.5
+Version: 0.1.7.2
 Summary: Winglets by Python
 Home-page: https://github.com/DarkDisasters/Winglets
 Author: Shuaiqi Wang
 Author-email: shuaiqiwang666@gmail.com
 License: MIT
 Description: 
-        # Winglets_Python
+        # 下载
+        - python3，推荐python3.6以上
+        - pip install Winglets 
         
-        ## 代码步骤简要v0.1
+        # 接口
+        ## Winglets
+        ```
+        drawWinglets(data, colorArray = ['red', 'blue', 'pink', 'orange', 'purple', 'indigo'], onlyWinglets=True)
+        ```
+        #### 参数
+        - data: 要添加效果的数据，数据形式可以为数组或者对象
+            - 对象: 对象的key为每组数据的类
+                ```
+                {
+                    "1" : [ 
+                        {
+                            "x" : 458.545253723722,
+                            "y" : 517.796113219558
+                        }, 
+                        ...
+                    ],
+                    "4" : [ 
+                        {
+                            "x" : 487.798180288922,
+                            "y" : 346.750755518256
+                        }, 
+                        {
+                            "x" : 458.787734845522,
+                            "y" : 316.371739750119
+                        }, 
+                        ...
+                    ]
+                }
+                ```
+            - 数组：数组没有标识属于哪个类，所以内部会按照从1往后的顺序设置数据标识类
+                ```
+                [
+                    [ 
+                        [458.545253723722, 517.796113219558], 
+                        [487.798180288922, 346.750755518256]
+                        ...
+                    ],
+                    [ 
+                        [487.798180288922, 346.750755518256],
+                        [458.787734845522, 316.371739750119],
+                        ...
+                    ]
+                ]
+                ```
+        - colorArray：颜色数组。设定各个类对应的颜色，如:
+            ```
+            colorArray = ['red', 'blue', 'pink', 'orange']
+            data = {
+                    "1" : [ 
+                        {
+                            "x" : 458.545253723722,
+                            "y" : 517.796113219558
+                        }, 
+                    ],
+                    "4" : [ 
+                        {
+                            "x" : 487.798180288922,
+                            "y" : 346.750755518256
+                        }, 
+                        
+                    ]
+                }
+            
+            ```
+            **注意：若colorArray的长度小于data中类的数量则会报错**
+        - onlyWinglets：若为true，则程序中不会出现proximity和commonFate对应的按钮，若为false，则会出现所有操作对应的按钮
+        ## CommonFate
+        ```
+        drawCommonFate(data, colorArray = ['red', 'blue', 'pink', 'orange', 'purple', 'indigo'])
+        ```
+        #### 参数
+        - data：同接口Winglets
+        - colorArray：同接口Winglets
+        ## Proximity
+        ```
+        drawProximity(data, colorArray = ['red', 'blue', 'pink', 'orange', 'purple', 'indigo'])
+        ```
+        #### 参数
+        - data：同接口Winglets
+        - colorArray：同接口Winglets
+        
+        ## circle
+        ```
+        drawCirlce(data, colorArray = ['red', 'blue', 'pink', 'orange', 'purple', 'indigo'], onlyCicle=True)
+        ```
+        #### 参数
+        - data：同接口Winglets
+        - colorArray：同接口Winglets
+        - onlyCircle: 若为true，则没有其他操作的按钮，若为False，则所有操作的按钮都有
+        
+        # 代码步骤简要v0.1
         1. 生成density map，会有很多个density值
         2. 根据不同的density生成isoValue对应的contour
         3. 找到应该保留的最外层contour
         4. 根据最外层contour找到centroids，将最外城contour分成sampleNum份，再根据centroids和centroid对应的射线，求出与最外层contour的交集，根据交点插值生成里层的contourNum个contour
         5. 遍历当前所有点，找到最近的contour上的最近的点，在contour上根据最近的点生成winglets的左边与右边（其实就是左右端点），然后根据向量计算，分别找到contour上左右点对应的原有点处的左右点，这样就可以根据原有点处的左右点生成满足对应contour弧度的位于原有点处的winglets
         6. 根据第五步生成的点使用d3来画线段
+        
 Platform: UNKNOWN
 Classifier: License :: OSI Approved :: MIT License
 Classifier: Programming Language :: Python

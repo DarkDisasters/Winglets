@@ -1,6 +1,99 @@
-# Winglets_Python
+# 下载
+- python3，推荐python3.6以上
+- pip install Winglets 
 
-## 代码步骤简要v0.1
+# 接口
+## Winglets
+```
+drawWinglets(data, colorArray = ['red', 'blue', 'pink', 'orange', 'purple', 'indigo'], onlyWinglets=True)
+```
+#### 参数
+- data: 要添加效果的数据，数据形式可以为数组或者对象
+    - 对象: 对象的key为每组数据的类
+        ```
+        {
+            "1" : [ 
+                {
+                    "x" : 458.545253723722,
+                    "y" : 517.796113219558
+                }, 
+                ...
+            ],
+            "4" : [ 
+                {
+                    "x" : 487.798180288922,
+                    "y" : 346.750755518256
+                }, 
+                {
+                    "x" : 458.787734845522,
+                    "y" : 316.371739750119
+                }, 
+                ...
+            ]
+        }
+        ```
+    - 数组：数组没有标识属于哪个类，所以内部会按照从1往后的顺序设置数据标识类
+        ```
+        [
+            [ 
+                [458.545253723722, 517.796113219558], 
+                [487.798180288922, 346.750755518256]
+                ...
+            ],
+            [ 
+                [487.798180288922, 346.750755518256],
+                [458.787734845522, 316.371739750119],
+                ...
+            ]
+        ]
+        ```
+- colorArray：颜色数组。设定各个类对应的颜色，如:
+    ```
+    colorArray = ['red', 'blue', 'pink', 'orange']
+    data = {
+            "1" : [ 
+                {
+                    "x" : 458.545253723722,
+                    "y" : 517.796113219558
+                }, 
+            ],
+            "4" : [ 
+                {
+                    "x" : 487.798180288922,
+                    "y" : 346.750755518256
+                }, 
+                
+            ]
+        }
+    
+    ```
+    **注意：若colorArray的长度小于data中类的数量则会报错**
+- onlyWinglets：默认为True，程序中不会出现proximity和commonFate对应的按钮，若为False，则会出现所有操作对应的按钮
+## CommonFate
+```
+drawCommonFate(data, colorArray = ['red', 'blue', 'pink', 'orange', 'purple', 'indigo'])
+```
+#### 参数
+- data：同接口Winglets
+- colorArray：同接口Winglets
+## Proximity
+```
+drawProximity(data, colorArray = ['red', 'blue', 'pink', 'orange', 'purple', 'indigo'])
+```
+#### 参数
+- data：同接口Winglets
+- colorArray：同接口Winglets
+
+## circle
+```
+drawCirlce(data, colorArray = ['red', 'blue', 'pink', 'orange', 'purple', 'indigo'], onlyCicle=True)
+```
+#### 参数
+- data：同接口Winglets
+- colorArray：同接口Winglets
+- onlyCircle: 默认为t=True，没有其他操作的按钮，若为False，则所有操作的按钮都有
+
+# 代码步骤简要v0.1
 1. 生成density map，会有很多个density值
 2. 根据不同的density生成isoValue对应的contour
 3. 找到应该保留的最外层contour

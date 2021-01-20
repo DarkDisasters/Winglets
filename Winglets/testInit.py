@@ -48,6 +48,13 @@ class ColorNotEnoughError(Exception):
     def __str__(self):
         return self.errorInfo
 
+def getMaxKey(curDict):
+    maxKeyValue = 0
+    for key in curDict.keys():
+        if maxKeyValue < int(key):
+            maxKeyValue = int(key)
+    return maxKeyValue
+
 def listTransDict(listData):
     dataDict = {}
     for i in range(len(listData)):
@@ -60,14 +67,21 @@ def listTransDict(listData):
     return dataDict
 
 def drawCirlce(data, colorArray = ['red', 'blue', 'pink', 'orange', 'purple', 'indigo'], onlyCicle=True):
-    operationInstance = OperationHandler(False, onlyCicle)
+    operationInstance = None
     dataDict = {}
+
     if isinstance(data, list):
         dataDict = listTransDict(data)
     else:
         dataDict = data
     if len(colorArray) < len(dataDict.keys()):
         raise ColorNotEnoughError('colorArray length is not enough')
+    
+    if not onlyCicle:
+        operationInstance = OperationHandler(False)
+    else:
+        operationInstance = OperationHandler(False, onlyCicle)
+
     operationInstance.mapColor(colorArray, dataDict)
     operationInstance.drawWinglets(dataDict)
     operationInstance.endDraw()
@@ -80,6 +94,7 @@ def drawWinglets(data, colorArray = ['red', 'blue', 'pink', 'orange', 'purple', 
         dataDict = listTransDict(data)
     else:
         dataDict = data
+    # if len(colorArray) < len(dataDict.keys()) or len(colorArray) < getMaxKey(dataDict):
     if len(colorArray) < len(dataDict.keys()):
         raise ColorNotEnoughError('colorArray length is not enough')
     operationInstance.mapColor(colorArray, dataDict)
@@ -93,6 +108,7 @@ def drawCommonFate(data, colorArray = ['red', 'blue', 'pink', 'orange', 'purple'
         dataDict = listTransDict(data)
     else:
         dataDict = data
+    # if len(colorArray) < len(dataDict.keys()) or len(colorArray) < getMaxKey(dataDict):
     if len(colorArray) < len(dataDict.keys()):
         raise ColorNotEnoughError('colorArray length is not enough')
     operationInstance.mapColor(colorArray, dataDict)
@@ -106,6 +122,7 @@ def drawProximity(data, colorArray = ['red', 'blue', 'pink', 'orange', 'purple',
         dataDict = listTransDict(data)
     else:
         dataDict = data
+    # if len(colorArray) < len(dataDict.keys()) or len(colorArray) < getMaxKey(dataDict):
     if len(colorArray) < len(dataDict.keys()):
         raise ColorNotEnoughError('colorArray length is not enough')
     operationInstance.mapColor(colorArray, dataDict)
@@ -126,8 +143,10 @@ for curKey in dataDict['dots'].keys():
         curKeyArr.append([curArrDictData[i]['x'], curArrDictData[i]['y']])
     dataArray.append(curKeyArr)
 # print('dataArray', dataArray)
-drawCirlce(dataArray, ['#d7191c', '#fdae61', '#abdda4','#2b83ba'])
-# drawWinglets(dataArray, ['#d7191c', '#fdae61', '#abdda4','#2b83ba'])
-# drawCommonFate(dataArray, ['#d7191c', '#fdae61', '#abdda4','#2b83ba'])
-# drawProximity(dataArray, ['#d7191c', '#fdae61', '#abdda4','#2b83ba'])
-# draw(dataDict['dots'], ['#d7191c', '#fdae61', '#abdda4','#2b83ba'])
+# drawCirlce(dataArray, ['#d7191c', '#fdae61', '#ffffbf', '#abdda4', '#2b83ba'], False)
+# drawWinglets(dataArray, ['#d7191c', '#fdae61', '#ffffbf', '#abdda4'])
+# drawWinglets(dataArray, ['#d7191c', '#fdae61', '#ffffbf', '#abdda4', '#2b83ba'])
+# drawCommonFate(dataArray, ['#d7191c', '#fdae61', '#ffffbf', '#abdda4', '#2b83ba'])
+# drawProximity(dataArray, ['#d7191c', '#fdae61', '#ffffbf', '#abdda4'])
+drawProximity(dataDict['dots'], ['#d7191c', '#fdae61', '#ffffbf', '#abdda4'])
+# draw(dataDict['dots'], ['#d7191c', '#fdae61', '#ffffbf', '#abdda4', '#2b83ba'])

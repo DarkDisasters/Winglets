@@ -18,7 +18,7 @@ URL = 'https://github.com/DarkDisasters/Winglets'
 EMAIL = 'shuaiqiwang666@gmail.com'
 AUTHOR = 'Shuaiqi Wang'
 REQUIRES_PYTHON = '>=3.6.0'
-VERSION = '0.1.5'
+VERSION = '0.1.7.2'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
