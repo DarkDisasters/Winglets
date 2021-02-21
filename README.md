@@ -3,7 +3,7 @@ Implementation of [Winglets: Visualizing Association with Uncertainty in Multi-c
   
 ### [Project page](https://vcc.tech/research/2019/Winglets) | [paper](https://vcc.tech/file/upload_file//image/research/att201908230922/Winglets.pdf) | [video](https://vcc.tech/file/upload_file//image/research/att202102101341/Winglets_demo.mp4)
 
-![overview](https://github.com/DarkDisasters/Winglets/tree/main/doc/overview.png)
+![overview](https://github.com/DarkDisasters/Winglets/blob/main/doc/overview.png)
 
 We introduce Winglets, an enhancement to the classic scatterplot to better perceptually pronounce multiple classes by improving the perception of association and uncertainty of points to their related cluster. Designed as a pair of dual-sided strokes belonging to a data point, Winglets leverage the Gestalt principle of Closure to shape the perception of the form of the clusters, rather than use an explicit divisive encoding. Through a subtle design of two dominant attributes, length and orientation, Winglets enable viewers to perform a mental completion of the clusters. 
 
