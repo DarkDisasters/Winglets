@@ -1,15 +1,29 @@
-# 下载
-- python3，推荐python3.6以上
-- pip install Winglets 
+# Winglets
+Implementation of [Winglets: Visualizing Association with Uncertainty in Multi-class Scatterplots.](https://vcc.tech/research/2019/Winglets)  
+  
+### [Project page](https://vcc.tech/research/2019/Winglets) | [paper](https://vcc.tech/file/upload_file//image/research/att201908230922/Winglets.pdf) | [video](https://vcc.tech/file/upload_file//image/research/att202102101341/Winglets_demo.mp4)
 
-# 接口
-## Winglets
+![overview](https://github.com/DarkDisasters/Winglets/tree/main/doc/overview.png)
+
+We introduce Winglets, an enhancement to the classic scatterplot to better perceptually pronounce multiple classes by improving the perception of association and uncertainty of points to their related cluster. Designed as a pair of dual-sided strokes belonging to a data point, Winglets leverage the Gestalt principle of Closure to shape the perception of the form of the clusters, rather than use an explicit divisive encoding. Through a subtle design of two dominant attributes, length and orientation, Winglets enable viewers to perform a mental completion of the clusters. 
+
+## Dependencies
+- python3: We used Python3.6
+- Python Third-Party Libraries: tkinter, pandas, scipy, numpy, shapely, scikit-image, seaborn
+
+## Usage
+- Run `pip install Winglets` to install Winglets. Note that you should install other python third-party libraries according to the tip.
+- Use `import Winglets` to import Winglets libraires.
+- You can run python `testAPI.py` to test related API. We prepare related test file(./testAPI.py) and data(./testFile.json) .
+
+## API
+#### Winglets
 ```
 drawWinglets(data, colorArray = ['red', 'blue', 'pink', 'orange', 'purple', 'indigo'], onlyWinglets=True)
 ```
-#### 参数
-- data: 要添加效果的数据，数据形式可以为数组或者对象
-    - 对象: 对象的key为每组数据的类
+###### Parameters
+- data: the data form can be array or object
+    - object: the key of the object is class of each group of data, e.g.,
         ```
         {
             "1" : [ 
@@ -32,7 +46,7 @@ drawWinglets(data, colorArray = ['red', 'blue', 'pink', 'orange', 'purple', 'ind
             ]
         }
         ```
-    - 数组：数组没有标识属于哪个类，所以内部会按照从1往后的顺序设置数据标识类
+    - array：The array data does not identify which class it belongs to, so internally the program will set the data classes starting at 1, e.g.,
         ```
         [
             [ 
@@ -47,7 +61,7 @@ drawWinglets(data, colorArray = ['red', 'blue', 'pink', 'orange', 'purple', 'ind
             ]
         ]
         ```
-- colorArray：颜色数组。设定各个类对应的颜色，如:
+- colorArray：set the color for each group, e.g.,
     ```
     colorArray = ['red', 'blue', 'pink', 'orange']
     data = {
@@ -67,36 +81,46 @@ drawWinglets(data, colorArray = ['red', 'blue', 'pink', 'orange', 'purple', 'ind
         }
     
     ```
-    **注意：若colorArray的长度小于data中类的数量则会报错**
-- onlyWinglets：默认为True，程序中不会出现proximity和commonFate对应的按钮，若为False，则会出现所有操作对应的按钮
-## CommonFate
+    Note: An error will be reported if the length of the **colorArray** is less than the number of classes in the data
+- onlyWinglets：the default is True. Buttons corresponding to proximity and commonFate will not appear in the program; if False, buttons corresponding to all operations will appear
+#### CommonFate
 ```
 drawCommonFate(data, colorArray = ['red', 'blue', 'pink', 'orange', 'purple', 'indigo'])
 ```
-#### 参数
-- data：同接口Winglets
-- colorArray：同接口Winglets
-## Proximity
+###### Parameters
+- data：description same as API Winglets.
+- colorArray：description same as API Winglets.
+#### Proximity
 ```
 drawProximity(data, colorArray = ['red', 'blue', 'pink', 'orange', 'purple', 'indigo'])
 ```
-#### 参数
-- data：同接口Winglets
-- colorArray：同接口Winglets
+###### Parameters
+- data：description same as API Winglets.
+- colorArray：description same as API Winglets.
 
-## circle
+#### circle
 ```
 drawCirlce(data, colorArray = ['red', 'blue', 'pink', 'orange', 'purple', 'indigo'], onlyCicle=True)
 ```
-#### 参数
-- data：同接口Winglets
-- colorArray：同接口Winglets
-- onlyCircle: 默认为t=True，没有其他操作的按钮，若为False，则所有操作的按钮都有
+###### Parameters
+- data：description same as API Winglets.
+- colorArray：description same as API Winglets.
+- onlyCircle: the default is True，there are no buttons for other actions. If False, there are buttons for all actions.
 
-# 代码步骤简要v0.1
-1. 生成density map，会有很多个density值
-2. 根据不同的density生成isoValue对应的contour
-3. 找到应该保留的最外层contour
-4. 根据最外层contour找到centroids，将最外城contour分成sampleNum份，再根据centroids和centroid对应的射线，求出与最外层contour的交集，根据交点插值生成里层的contourNum个contour
-5. 遍历当前所有点，找到最近的contour上的最近的点，在contour上根据最近的点生成winglets的左边与右边（其实就是左右端点），然后根据向量计算，分别找到contour上左右点对应的原有点处的左右点，这样就可以根据原有点处的左右点生成满足对应contour弧度的位于原有点处的winglets
-6. 根据第五步生成的点使用d3来画线段
+## Citation
+Please cite the paper in your publications if it helps your research:
+```
+@article{Winglets19,
+title = {Winglets: Visualizing Association with Uncertainty in Multi-class Scatterplots},
+author = {Min Lu, Shuaiqi Wang, Joel Lanir, Noa Fish, Yang Yue, Daniel Cohen-Or, Hui Huang},
+journal = {IEEE Transactions on Visualization and Computer Graphics (Proceedings of InfoVis 2019)},
+volume = {26},
+number = {1}, 
+
+pages = {770--779}, 
+
+year = {2020},
+} 
+```
+
+
