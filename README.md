@@ -17,7 +17,7 @@ We introduce Winglets, an enhancement to the classic scatterplot to better perce
 - You can run python `testAPI.py` to test related API. We prepare related test file(./testAPI.py) and data(./testFile.json) .
 
 ## API
-#### Winglets
+### Winglets
 ```
 drawWinglets(data, colorArray = ['red', 'blue', 'pink', 'orange', 'purple', 'indigo'], onlyWinglets=True)
 ```
@@ -83,14 +83,14 @@ drawWinglets(data, colorArray = ['red', 'blue', 'pink', 'orange', 'purple', 'ind
     ```
     Note: An error will be reported if the length of the **colorArray** is less than the number of classes in the data
 - onlyWinglets：the default is True. Buttons corresponding to proximity and commonFate will not appear in the program; if False, buttons corresponding to all operations will appear
-#### CommonFate
+### CommonFate
 ```
 drawCommonFate(data, colorArray = ['red', 'blue', 'pink', 'orange', 'purple', 'indigo'])
 ```
 ###### Parameters
 - data：description same as API Winglets.
 - colorArray：description same as API Winglets.
-#### Proximity
+### Proximity
 ```
 drawProximity(data, colorArray = ['red', 'blue', 'pink', 'orange', 'purple', 'indigo'])
 ```
@@ -98,7 +98,7 @@ drawProximity(data, colorArray = ['red', 'blue', 'pink', 'orange', 'purple', 'in
 - data：description same as API Winglets.
 - colorArray：description same as API Winglets.
 
-#### circle
+### circle
 ```
 drawCirlce(data, colorArray = ['red', 'blue', 'pink', 'orange', 'purple', 'indigo'], onlyCicle=True)
 ```
