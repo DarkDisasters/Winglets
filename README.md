@@ -8,7 +8,7 @@ Implementation of [Winglets: Visualizing Association with Uncertainty in Multi-c
 We introduce Winglets, an enhancement to the classic scatterplot to better perceptually pronounce multiple classes by improving the perception of association and uncertainty of points to their related cluster. Designed as a pair of dual-sided strokes belonging to a data point, Winglets leverage the Gestalt principle of Closure to shape the perception of the form of the clusters, rather than use an explicit divisive encoding. Through a subtle design of two dominant attributes, length and orientation, Winglets enable viewers to perform a mental completion of the clusters. 
 
 ## Dependencies
-- python3: We used Python3.6
+- Python3: we used Python3.6
 - Python Third-Party Libraries: tkinter, pandas, scipy, numpy, shapely, scikit-image, seaborn
 
 ## Usage
