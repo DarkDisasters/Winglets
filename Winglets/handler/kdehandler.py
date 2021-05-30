@@ -80,16 +80,26 @@ class KDE():
         minDensity = globalZ.ravel().min()
         maxDensity = globalZ.ravel().max()
         proximityLowDensityPoints = []
+        maxDensityPoints = []
 
         for i in range(isoPosNum-1, 0, -1):
             thresholdDensity = baseValue + i * (maxDensity - baseValue)/isoPosNum
             thresholdContours = measure.find_contours(globalZ, thresholdDensity, fully_connected='high')
+            # thresholdContours = measure.find_contours(globalZ, thresholdDensity)
             thresholdPolygonArr = []
-            maxDensityPoints = []
+            # maxDensityPoints = []
             thresholdContainPointCount = 0
 
             for n, contour in enumerate(thresholdContours):
                 contour = contour.tolist()
+                if (len(contour) < 3):
+                    continue
+                # if (len(contour) < 2):
+                #     contour.append([contour[0][0] + 1, contour[0][1] + 1])
+                #     contour.append([contour[0][0] - 1, contour[0][1] - 1])
+                # elif (len(contour) == 2):
+                #     contour.insert(1, [(contour[0][0] + contour[1][0]) / 2, (contour[0][1] + contour[1][1]) / 2])
+                # print('contour', contour)
                 thresholdCanvasContour = self.convert2Canvas(contour)
                 thresholdPolygon = Polygon(thresholdCanvasContour)
                 thresholdPolygonArr.append(thresholdPolygon)
@@ -102,6 +112,7 @@ class KDE():
                             maxDensityPoints.append([dot['x'], dot['y']])
                         else:
                             proximityLowDensityPoints.append([dot['x'], dot['y']])
+            # print('count', thresholdContainPointCount)
             if thresholdContainPointCount < 30 and thresholdContainPointCount > 0:
                 break
         print('count', thresholdContainPointCount)
@@ -109,6 +120,7 @@ class KDE():
 
     def getContours(self, Z, dots):
         mapIsovalueContours = {}
+        # isoPosNum = 10
         isoPosNum = 10
         baseValue = 1e-9
         liIsovalue = []
@@ -124,6 +136,9 @@ class KDE():
         maxDensityPoints = []
         for n, contour in enumerate(testMaxContours):
             contour = contour.tolist()
+            if (len(contour) < 3):
+                continue
+            print('contour', contour)
             testMaxCanvasContour = self.convert2Canvas(contour)
             testMaxPolygon = Polygon(testMaxCanvasContour)
             testMaxPolygonArr.append(testMaxPolygon)
@@ -156,9 +171,13 @@ class KDE():
             #遍历按照当前isoValue生成的contour,因为同一个值可能生成两个互补重叠的contour，参考等高线
             for n, contour in enumerate(curContours):
                 contour = contour.tolist();
+
                 if (len(contour) == 0):
                     continue
 
+                # 因数据点数量过少添加
+                if (len(contour) < 3):
+                    continue
                 #将当前的contour以及设定count为0，用来统计当前isoValue生成的contour里有多少个点
                 # curLiContours.append({
                 #     'contour': contour,
@@ -173,6 +192,7 @@ class KDE():
                 });
                 #按照当前的contour生成polygon，后面用来统计当前contour生成的polygon中点的个数
                 # curPolygon = Polygon(contour)
+
                 curPolygon = Polygon(curCanvasContour)
                 curLiPolygon.append(curPolygon)
             
@@ -249,7 +269,11 @@ class KDEHandler():
                 # print('centroid', estimator.fit(curMaxDensityPoints).cluster_centers_.tolist())
             else:
                 curProximityPoints = curLowDensityPoints + curMaxDensityPoints
-            globalMaxDensityPoints.append(curMaxDensityPoints[math.floor(len(curMaxDensityPoints) / 2)])
+            print('len', len(curMaxDensityPoints))
+            if (len(curMaxDensityPoints) == 0):
+                print('maxDensity points none')
+            else:
+                globalMaxDensityPoints.append(curMaxDensityPoints[math.floor(len(curMaxDensityPoints) / 2)])
             # print('curProximityPoints',curProximityPoints)
             proximityPoints.append({'classId': classId, 'curClassProximityPoints': curProximityPoints})
         # globalTransferContour, globalMaxDensityPoints = KDEContour.getContours(globalZ1, allDotsXYData)
@@ -273,6 +297,8 @@ class KDEHandler():
             # 每个key对应以当前isovalue生成的一个或多个contour以及该contour里面包含的点的数量
             transferContour, maxDensityPoints = KDEContour.getContours(Z1, dotsXYData)
 
+            # print('transferC', transferContour)
+
             #将有getContours函数中提取的isoValue存放在liIsoValue中并排序
             liIsovalue = []
             mainContour = {}
@@ -282,16 +308,16 @@ class KDEHandler():
             for Isovalue_str in transferContour.keys():
                 liIsovalue.append(float(Isovalue_str))
             liIsovalue = sorted(liIsovalue)
-            
+            print('liIsovalue', liIsovalue)
             mapBezierContour = {}
             mapIsoContourCount = {}
             
             preCount = len(dotsXYData)
+            # print('preCount', preCount)
             preContour = []
             preIsovalue = -1e6
             isoCount = 0
-
-
+            
             for Isovalue in liIsovalue:
                 maxCount = -1e6
                 maxIsovalue = -1e6
@@ -319,6 +345,7 @@ class KDEHandler():
                         continue
                     liNewContour.append(tempContour)
                     liNewCount.append(tempCount)
+                # print('maxContour', maxContour)
                 # preCount为当前类所以的点的数量，maxCount为当前isoValue生成的众多contour中点数量最多的contour的点数量
                 # 只选择其中最大的一个contour的点数量是因为如果算两个contour的总和的话，没有骤减继续比较时应该选取哪个contour就成了一个问题
                 # 进行了比较precount - maxCount > 点数量的87%说明已经发生了骤减，少了13%的点，可以选择外层的contour，
@@ -326,13 +353,20 @@ class KDEHandler():
                 # print('maxContour', maxContour)
                 # print('preCount', preCount)
                 # print('maxCount', maxCount)
+                
                 if(stopCompare == False):
                     if((preCount - maxCount) > int(preCount * 0.13)):
-                        mainContour = preContour
+                        # print('aaa')
+                        if len(preContour) == 0:
+                            mainContour = maxContour
+                        else:
+                            mainContour = preContour
+                        print('maincontour', mainContour)
                         mainIsovalue = preIsovalue
                         stopCompare = True
                     else:
                         preContour = maxContour
+                        print('aaa preContour', preContour)
                         preIsovalue = maxIsovalue
 
                 if (len(liNewContour) > 0):

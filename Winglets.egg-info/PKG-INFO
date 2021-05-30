@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: Winglets
-Version: 0.1.7.2
+Version: 0.1.8.0
 Summary: Winglets by Python
 Home-page: https://github.com/DarkDisasters/Winglets
 Author: Shuaiqi Wang
@@ -77,7 +77,7 @@ Description:
             
             ```
             **注意：若colorArray的长度小于data中类的数量则会报错**
-        - onlyWinglets：若为true，则程序中不会出现proximity和commonFate对应的按钮，若为false，则会出现所有操作对应的按钮
+        - onlyWinglets：默认为True，程序中不会出现proximity和commonFate对应的按钮，若为False，则会出现所有操作对应的按钮
         ## CommonFate
         ```
         drawCommonFate(data, colorArray = ['red', 'blue', 'pink', 'orange', 'purple', 'indigo'])
@@ -100,7 +100,7 @@ Description:
         #### 参数
         - data：同接口Winglets
         - colorArray：同接口Winglets
-        - onlyCircle: 若为true，则没有其他操作的按钮，若为False，则所有操作的按钮都有
+        - onlyCircle: 默认为t=True，没有其他操作的按钮，若为False，则所有操作的按钮都有
         
         # 代码步骤简要v0.1
         1. 生成density map，会有很多个density值
